@@ -119,17 +119,43 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 export async function startStaticMode() {
   if (session) return;
   console.log("[static-mode] starting browser-side LeNet inference");
-  // Tell ONNX runtime where its WASM lives (CDN).
-  ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/";
-  ort.env.wasm.numThreads = 1;
+  console.log("[static-mode] ort:", typeof ort, ort && Object.keys(ort).slice(0, 10));
+  if (!ort) throw new Error("ort global not found");
 
+  // Tell ONNX runtime where its WASM lives (CDN).
+  try {
+    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/";
+    ort.env.wasm.numThreads = 1;
+    ort.env.wasm.simd = true;
+    ort.env.wasm.proxy = false;
+  } catch (e) {
+    console.error("[static-mode] env config failed:", e);
+  }
+
+  console.log("[static-mode] fetching mapping + samples...");
   const [m, s] = await Promise.all([
     fetch("./mapping.json").then(r => r.json()),
     fetch("./mnist-samples.json").then(r => r.json()),
   ]);
   mapping = m;
   samples = s;
-  session = await ort.InferenceSession.create("./lenet5.onnx");
+  console.log("[static-mode] loaded", samples.length, "samples; creating ORT session");
+
+  try {
+    session = await ort.InferenceSession.create("./lenet5.onnx", {
+      executionProviders: ["wasm"],
+      graphOptimizationLevel: "all",
+    });
+  } catch (e) {
+    // Print the most useful information available about a thrown emscripten error.
+    let msg = "";
+    if (e instanceof Error) msg = `${e.name}: ${e.message}\n${e.stack || ""}`;
+    else if (typeof e === "number") msg = `bare number ${e} (likely emscripten exception)`;
+    else msg = String(e);
+    console.error("[static-mode] InferenceSession.create failed:", msg, "raw:", e);
+    throw new Error(`InferenceSession.create failed: ${msg}`);
+  }
+  console.log("[static-mode] ORT session created; inputs:", session.inputNames, "outputs:", session.outputNames);
 
   // Decorate the page so visitors know they're in static mode.
   const banner = document.createElement("div");
