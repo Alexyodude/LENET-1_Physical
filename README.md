@@ -1,6 +1,8 @@
 # LENET-1 Physical
 
-Physical illuminated LeNet-5 visualization on a Raspberry Pi 4.
+Physical illuminated LeNet-5 visualization on a Raspberry Pi 4, with a
+browser-based digital twin (3D scene, per-fmap planes, architecture overlay,
+fault simulation, history scrubber).
 
 ## Quick start (dev machine, mock LEDs)
 
@@ -10,10 +12,28 @@ uv run python -m lenet1_physical.model.train --epochs 10
 uv run python -m lenet1_physical.main \
    --mapping config/mapping.example.yaml \
    --weights weights/lenet5.pt \
-   --mode mock
+   --mode simulate --demo
 ```
 
-Open http://127.0.0.1:8080. Click **Sample**, then **Step** repeatedly.
+Open http://127.0.0.1:8080. With `--demo` the server auto-cycles MNIST
+samples; without it, click **Sample** then **Step** in the UI (or wire a
+GPIO button on a Pi).
+
+## Public web demo
+
+A `Dockerfile` is included so the twin can be deployed to any container
+host. Recommended free options:
+
+- **Hugging Face Spaces** — `huggingface.co/new-space` → SDK: Docker → set
+  Space hardware to CPU basic → push this repo to the Space's git remote.
+  Use port 7860 (already the Dockerfile default).
+- **Render** — `render.com/new/web-service` → connect this repo → environment
+  Docker → keep the default port. Free tier sleeps after 15 min of inactivity.
+- **Fly.io** — `fly launch` from a clone of this repo and accept the Docker
+  detection.
+
+The deployed instance runs `--mode simulate --demo`, so any visitor sees
+inferences cycling through automatically.
 
 ## Run on hardware (Raspberry Pi 4)
 
