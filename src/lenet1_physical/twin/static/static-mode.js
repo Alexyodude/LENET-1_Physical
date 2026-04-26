@@ -5,7 +5,7 @@
 // `window.twinEvents.frame` CustomEvents the WebSocket would have produced —
 // so arch.js, panel.js, history-ui.js, etc. all keep working unchanged.
 
-import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/ort.min.mjs";
+import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/+esm";
 
 const LAYER_THEMES = {
   L1: [255, 220, 180],
