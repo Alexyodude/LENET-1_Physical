@@ -601,10 +601,16 @@ async function init() {
   buildLegend();
   resize();
 
+  // Probe the backend ONCE at startup. Modules that depend on backend-only
+  // endpoints (history scrubber, fault sim, brightness sync) skip their setup
+  // when running statically.
+  const backendAlive = await probeBackend();
+  window.twinMode = backendAlive ? "live" : "static";
+
   // Fetch mapping and place LEDs at real mm positions
   let mapping = { layers: {}, chains: [] };
   try {
-    let resp = await fetch("/mapping").catch(() => null);
+    let resp = backendAlive ? await fetch("/mapping").catch(() => null) : null;
     if (!resp || !resp.ok) resp = await fetch("./mapping.json");
     if (resp.ok) {
       const data = await resp.json();
@@ -619,40 +625,53 @@ async function init() {
     placeLEDsFallback();
   }
 
-  // Expose global twin state for modules
   window.twin = { scene, camera, ledMeshes, mapping };
 
-  // Also sync brightness from server
-  try {
-    const resp = await fetch("/brightness");
-    if (resp.ok) {
-      const data = await resp.json();
-      const pct = Math.round(data.brightness * 100);
-      brightEl.value = pct;
-      brightVal.textContent = `${pct}%`;
-    }
-  } catch { /* ignore */ }
+  if (backendAlive) {
+    try {
+      const resp = await fetch("/brightness");
+      if (resp.ok) {
+        const data = await resp.json();
+        const pct = Math.round(data.brightness * 100);
+        brightEl.value = pct;
+        brightVal.textContent = `${pct}%`;
+      }
+    } catch { /* ignore */ }
+  }
 
-  // Wire up Twin v2 modules
+  // Always-on visual modules
   setupArchOverlay(scene, mapping);
+  setupPhysicalBox(scene, mapping);
 
   const archPanelHost = document.getElementById("arch-panel-host");
   if (archPanelHost) setupArchPanel(archPanelHost);
 
-  setupPhysicalBox(scene, mapping);
+  // Backend-dependent modules: only when live
+  if (backendAlive) {
+    const faultHost = document.getElementById("fault-panel-host");
+    if (faultHost) setupFaultControls(faultHost);
 
-  const faultHost = document.getElementById("fault-panel-host");
-  if (faultHost) setupFaultControls(faultHost);
-
-  const historyHost = document.getElementById("history-panel-host");
-  if (historyHost) {
-    const store = createHistoryStore();
-    // Adapt store: history-ui expects store.listRecords but history-store exports refreshList
-    store.listRecords = store.refreshList;
-    setupHistoryUI(historyHost, store, ledMeshes);
+    const historyHost = document.getElementById("history-panel-host");
+    if (historyHost) {
+      const store = createHistoryStore();
+      store.listRecords = store.refreshList;
+      setupHistoryUI(historyHost, store, ledMeshes);
+    }
+  } else {
+    // Hide hosts so they don't claim layout space.
+    for (const id of ["fault-panel-host", "history-panel-host"]) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    }
+    // Disable buttons that POST to nonexistent endpoints.
+    for (const id of ["btn-sample", "btn-step", "btn-test-pixel"]) {
+      const el = document.getElementById(id);
+      if (el) { el.disabled = true; el.title = "disabled in static mode"; }
+    }
   }
 
-  startNetworking();
+  if (backendAlive) connectWS();
+  else startStaticFallback();
   animate();
 }
 

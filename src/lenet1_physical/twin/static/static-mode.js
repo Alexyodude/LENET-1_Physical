@@ -5,7 +5,12 @@
 // `window.twinEvents.frame` CustomEvents the WebSocket would have produced —
 // so arch.js, panel.js, history-ui.js, etc. all keep working unchanged.
 
-import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/+esm";
+// ort is loaded as a UMD <script> in index.html, exposing globalThis.ort.
+// Fall back to a graceful error if missing.
+const ort = globalThis.ort;
+if (!ort) {
+  console.error("[static-mode] onnxruntime-web global 'ort' not found");
+}
 
 const LAYER_THEMES = {
   L1: [255, 220, 180],
