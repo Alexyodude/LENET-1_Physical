@@ -26,6 +26,7 @@ env/
 !weights/lenet5.pt
 *.pth
 *.onnx
+!src/lenet1_physical/twin/static/lenet5.onnx
 *.tflite
 mnist_data/
 

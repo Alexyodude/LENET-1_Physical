@@ -292,9 +292,44 @@ const predOverlay = document.getElementById("prediction-overlay");
 // key "L2:1" → Uint8ClampedArray(rows*cols*3) of latest RGB
 const slicePixelData = new Map();
 
+let staticModeActive = false;
+
+async function probeBackend() {
+  // GitHub Pages and similar static hosts have no FastAPI server. Probe /healthz
+  // with a short timeout; if it doesn't respond, switch to in-browser inference.
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 1500);
+    const r = await fetch("./healthz", { signal: ctrl.signal, cache: "no-store" });
+    clearTimeout(t);
+    return r.ok;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function startStaticFallback() {
+  if (staticModeActive) return;
+  staticModeActive = true;
+  wsStatusEl.textContent = "STATIC";
+  wsStatusEl.className = "status-val status-connected";
+  try {
+    const mod = await import("./static-mode.js");
+    // Bridge: route static-mode frames through handleFrame too so seq/fps update.
+    window.twinEvents.addEventListener("frame", (ev) => handleFrame(ev.detail));
+    await mod.startStaticMode();
+  } catch (e) {
+    console.error("[main] static fallback failed:", e);
+    wsStatusEl.textContent = "OFFLINE";
+    wsStatusEl.className = "status-val status-disconnected";
+  }
+}
+
 function connectWS() {
+  if (staticModeActive) return;
   const proto = location.protocol === "https:" ? "wss:" : "ws:";
   const ws = new WebSocket(`${proto}//${location.host}/ws`);
+  let failed = false;
 
   ws.addEventListener("open", () => {
     wsStatusEl.textContent = "CONNECTED";
@@ -302,18 +337,29 @@ function connectWS() {
   });
 
   ws.addEventListener("close", () => {
+    if (staticModeActive) return;
     wsStatusEl.textContent = "DISCONNECTED";
     wsStatusEl.className = "status-val status-disconnected";
-    setTimeout(connectWS, 2000);
+    if (failed) {
+      probeBackend().then((alive) => alive ? setTimeout(connectWS, 2000) : startStaticFallback());
+    } else {
+      setTimeout(connectWS, 2000);
+    }
   });
 
-  ws.addEventListener("error", () => ws.close());
+  ws.addEventListener("error", () => { failed = true; ws.close(); });
 
   ws.addEventListener("message", (ev) => {
     const f = JSON.parse(ev.data);
     handleFrame(f);
     window.twinEvents.dispatchEvent(new CustomEvent("frame", { detail: f }));
   });
+}
+
+async function startNetworking() {
+  const alive = await probeBackend();
+  if (alive) connectWS();
+  else startStaticFallback();
 }
 
 function handleFrame(f) {
@@ -558,7 +604,8 @@ async function init() {
   // Fetch mapping and place LEDs at real mm positions
   let mapping = { layers: {}, chains: [] };
   try {
-    const resp = await fetch("/mapping");
+    let resp = await fetch("/mapping").catch(() => null);
+    if (!resp || !resp.ok) resp = await fetch("./mapping.json");
     if (resp.ok) {
       const data = await resp.json();
       mapping = data;
@@ -605,7 +652,7 @@ async function init() {
     setupHistoryUI(historyHost, store, ledMeshes);
   }
 
-  connectWS();
+  startNetworking();
   animate();
 }
 

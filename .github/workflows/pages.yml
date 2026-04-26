@@ -1,0 +1,45 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble static site
+        run: |
+          mkdir -p _site
+          cp -r src/lenet1_physical/twin/static/. _site/
+          # The /mapping endpoint isn't available on Pages; ship a static copy
+          # so the frontend (and box.js) can fetch it via ./mapping.json.
+          ls _site/mapping.json _site/lenet5.onnx _site/mnist-samples.json
+          # Disable Jekyll so files starting with _ are served as-is.
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -201,8 +201,9 @@ async function autoInit() {
   if (!scene) return;
 
   try {
-    const resp = await fetch("/mapping");
-    if (!resp.ok) return;
+    let resp = await fetch("/mapping").catch(() => null);
+    if (!resp || !resp.ok) resp = await fetch("./mapping.json").catch(() => null);
+    if (!resp || !resp.ok) return;
     const mapping = await resp.json();
     if (mapping.layers && Object.keys(mapping.layers).length > 0) {
       setupPhysicalBox(scene, mapping);
