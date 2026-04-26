@@ -118,9 +118,20 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 export async function startStaticMode() {
   if (session) return;
-  console.log("[static-mode] starting browser-side LeNet inference");
-  console.log("[static-mode] ort:", typeof ort, ort && Object.keys(ort).slice(0, 10));
-  if (!ort) throw new Error("ort global not found");
+  try {
+    console.log("[static-mode] step 1: starting");
+    console.log("[static-mode] step 2: typeof ort =", typeof ort);
+    if (typeof ort === "undefined") {
+      console.error("[static-mode] ort global is missing entirely");
+      return;
+    }
+    console.log("[static-mode] step 3: ort.env exists?", !!ort.env);
+    console.log("[static-mode] step 4: ort.InferenceSession exists?", !!ort.InferenceSession);
+    console.log("[static-mode] step 5: ort.env.wasm exists?", !!(ort.env && ort.env.wasm));
+  } catch (e) {
+    console.error("[static-mode] early diag failed:", e, "stack:", e && e.stack);
+    return;
+  }
 
   // Tell ONNX runtime where its WASM lives (CDN).
   try {
