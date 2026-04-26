@@ -23,6 +23,7 @@ env/
 
 # Trained model artifacts (commit weights only when intentional)
 *.pt
+!weights/lenet5.pt
 *.pth
 *.onnx
 *.tflite
