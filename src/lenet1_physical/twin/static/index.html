@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LENET-1 Physical -- Digital Twin</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="root">
+    <!-- Left: 3D scene -->
+    <div id="scene-wrap">
+      <canvas id="scene"></canvas>
+      <div id="prediction-overlay" aria-live="polite"></div>
+    </div>
+
+    <!-- Right: control panel -->
+    <aside id="panel">
+      <header id="panel-header">
+        <span class="panel-title">LENET-1 PHYSICAL</span>
+        <span class="panel-subtitle">DIGITAL TWIN</span>
+      </header>
+
+      <section class="panel-section">
+        <div class="section-label">CONTROL</div>
+        <button id="btn-sample" class="btn-primary">SAMPLE</button>
+        <button id="btn-step" class="btn-secondary">STEP</button>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">BRIGHTNESS</div>
+        <div class="slider-row">
+          <input id="brightness" type="range" min="0" max="100" value="30" />
+          <span id="brightness-value">30%</span>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">TEST PIXEL</div>
+        <div class="test-row">
+          <input id="test-chain" type="number" min="0" max="16" value="0" placeholder="chain" />
+          <input id="test-pos" type="number" min="0" value="0" placeholder="pos" />
+          <button id="btn-test-pixel" class="btn-secondary">FIRE</button>
+        </div>
+      </section>
+
+      <section class="panel-section status-section">
+        <div class="section-label">STATUS</div>
+        <div class="status-grid">
+          <span class="status-key">WS</span>
+          <span id="ws-status" class="status-val status-disconnected">DISCONNECTED</span>
+          <span class="status-key">SEQ</span>
+          <span id="seq" class="status-val">--</span>
+          <span class="status-key">FPS</span>
+          <span id="fps" class="status-val">--</span>
+          <span class="status-key">LAYER</span>
+          <span id="current-layer" class="status-val">--</span>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">LAYER LEGEND</div>
+        <div id="layer-legend"></div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Bottom: 2D slice panels -->
+  <div id="slices-wrap">
+    <div id="slices"></div>
+  </div>
+
+  <!-- Hover tooltip -->
+  <div id="tooltip"></div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
