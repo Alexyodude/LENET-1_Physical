@@ -1,0 +1,28 @@
+layers:
+  L1:
+    feature_maps:
+      - id: 0
+        chain_id: 0
+        offset_in_chain: 0
+        rows: 28
+        cols: 28
+        origin_mm: [0, 0, 0]
+        pitch_mm: [10, 10]
+        order: row_major_snake
+  L6:
+    feature_maps:
+      - id: 0
+        chain_id: 16
+        offset_in_chain: 0
+        rows: 1
+        cols: 10
+        origin_mm: [0, 0, 150]
+        pitch_mm: [12, 12]
+        order: row_major_snake
+chains:
+  - id: 0
+    gpio: 18
+    length: 784
+  - id: 16
+    gpio: 6
+    length: 10
