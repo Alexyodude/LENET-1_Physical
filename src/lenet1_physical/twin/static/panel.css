@@ -1,0 +1,87 @@
+/* ── Input preview (L1) ── */
+.panel-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panel-input-label,
+.panel-confidence-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.panel-input-canvas {
+  display: block;
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  width: 100%;
+  height: auto;
+}
+
+/* ── Confidence bars (L6) ── */
+.panel-confidence-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.conf-row {
+  display: grid;
+  grid-template-columns: 12px 1fr 30px;
+  align-items: center;
+  gap: 5px;
+  border-radius: 2px;
+  padding: 1px 3px;
+  transition: background 0.15s;
+}
+
+.conf-row--max {
+  background: rgba(255, 68, 68, 0.08);
+}
+
+.conf-digit {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.conf-row--max .conf-digit {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.conf-track {
+  height: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.conf-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-dim);
+  border-radius: 3px;
+  transition: width 0.12s ease-out, background 0.12s;
+}
+
+.conf-row--max .conf-fill {
+  background: var(--red);
+}
+
+.conf-val {
+  font-size: 8px;
+  color: var(--text-dim);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.conf-row--max .conf-val {
+  color: var(--red);
+}

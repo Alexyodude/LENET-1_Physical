@@ -313,6 +313,10 @@ function handleFrame(f) {
   seqEl.textContent = f.seq;
   layerEl.textContent = f.layer;
 
+  // Broadcast to panel.js and other modules via twinEvents
+  if (!window.twinEvents) window.twinEvents = new EventTarget();
+  window.twinEvents.dispatchEvent(new CustomEvent("frame", { detail: f }));
+
   fpsCounter++;
 
   // Update target colors for each delta
