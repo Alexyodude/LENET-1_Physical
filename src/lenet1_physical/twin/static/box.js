@@ -10,7 +10,7 @@ const LAYER_THEMES = {
   L6: new THREE.Color(1.0,  0.0,  0.0),
 };
 
-const SLAB_PAD   = 20;   // mm padding around LED extents for each slab
+const SLAB_PAD   = 6;    // mm padding around LED extents for each fmap plane
 const SLAB_Z_OFF = -1;   // mm behind LEDs (lower Z)
 const INJ_DIST   = 1000; // mm accumulated chain length before injection marker
 
@@ -81,10 +81,21 @@ export function setupPhysicalBox(scene, mapping) {
     const fmaps = layerData.feature_maps || [];
     if (!fmaps.length) continue;
 
-    // ── Compute layer bounding box ─────────────────────────────────────────
-    let minX = Infinity, maxX = -Infinity;
-    let minY = Infinity, maxY = -Infinity;
-    let layerZ = fmaps[0].origin_mm[2];
+    // ── One plane per feature map (each fmap is its own physical slab) ─────
+    const slabMatBase = new THREE.MeshBasicMaterial({
+      color: 0x0c0e12,
+      transparent: true,
+      opacity: 0.85,
+      side: THREE.DoubleSide,
+    });
+    // Frame color is the layer theme at low intensity so each layer's stack
+    // is colour-coded at a glance.
+    const frameColor = theme.clone().multiplyScalar(0.45);
+    const frameMat = new THREE.LineBasicMaterial({
+      color: frameColor,
+      transparent: true,
+      opacity: 0.85,
+    });
 
     for (const fm of fmaps) {
       const ox = fm.origin_mm[0];
@@ -92,44 +103,29 @@ export function setupPhysicalBox(scene, mapping) {
       const oz = fm.origin_mm[2];
       const endX = ox + (fm.cols - 1) * fm.pitch_mm[0];
       const endY = oy + (fm.rows - 1) * fm.pitch_mm[1];
-      minX = Math.min(minX, ox);
-      maxX = Math.max(maxX, endX);
-      minY = Math.min(minY, oy);
-      maxY = Math.max(maxY, endY);
-      layerZ = Math.min(layerZ, oz);
+
+      const fmW = (endX - ox) + SLAB_PAD * 2;
+      const fmH = (endY - oy) + SLAB_PAD * 2;
+      const cx  = (ox + endX) / 2;
+      const cy  = (oy + endY) / 2;
+      const cz  = oz + SLAB_Z_OFF;
+
+      const slab = new THREE.Mesh(new THREE.PlaneGeometry(fmW, fmH), slabMatBase);
+      slab.position.set(cx, cy, cz);
+      scene.add(slab);
+
+      const hw = fmW / 2;
+      const hh = fmH / 2;
+      const verts = new Float32Array([
+        cx - hw, cy - hh, cz,  cx + hw, cy - hh, cz,
+        cx + hw, cy - hh, cz,  cx + hw, cy + hh, cz,
+        cx + hw, cy + hh, cz,  cx - hw, cy + hh, cz,
+        cx - hw, cy + hh, cz,  cx - hw, cy - hh, cz,
+      ]);
+      const buf = new THREE.BufferGeometry();
+      buf.setAttribute("position", new THREE.BufferAttribute(verts, 3));
+      scene.add(new THREE.LineSegments(buf, frameMat));
     }
-
-    const slabW = (maxX - minX) + SLAB_PAD * 2;
-    const slabH = (maxY - minY) + SLAB_PAD * 2;
-    const cx    = (minX + maxX) / 2;
-    const cy    = (minY + maxY) / 2;
-    const slabZ = layerZ + SLAB_Z_OFF;
-
-    // ── Slab (dark PCB panel) ──────────────────────────────────────────────
-    const slabGeo = new THREE.PlaneGeometry(slabW, slabH);
-    const slabMat = new THREE.MeshBasicMaterial({
-      color: 0x0c0e12,
-      transparent: true,
-      opacity: 0.85,
-      side: THREE.DoubleSide,
-    });
-    const slab = new THREE.Mesh(slabGeo, slabMat);
-    slab.position.set(cx, cy, slabZ);
-    scene.add(slab);
-
-    // ── Frame outline (LineSegments around slab) ───────────────────────────
-    const hw = slabW / 2;
-    const hh = slabH / 2;
-    const frameVerts = new Float32Array([
-      cx - hw, cy - hh, slabZ,  cx + hw, cy - hh, slabZ,
-      cx + hw, cy - hh, slabZ,  cx + hw, cy + hh, slabZ,
-      cx + hw, cy + hh, slabZ,  cx - hw, cy + hh, slabZ,
-      cx - hw, cy + hh, slabZ,  cx - hw, cy - hh, slabZ,
-    ]);
-    const frameBuf = new THREE.BufferGeometry();
-    frameBuf.setAttribute("position", new THREE.BufferAttribute(frameVerts, 3));
-    const frameMat = new THREE.LineBasicMaterial({ color: 0x2a2f36 });
-    scene.add(new THREE.LineSegments(frameBuf, frameMat));
 
     // ── Per-chain routing curves + GPIO labels + power injection ──────────
     // Group fmaps by chain_id
