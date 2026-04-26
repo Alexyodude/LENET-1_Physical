@@ -1,0 +1,43 @@
+- generic [ref=e5]:
+  - complementary [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e8]: LENET-1 PHYSICAL
+      - generic [ref=e9]: DIGITAL TWIN
+    - generic [ref=e10]:
+      - generic [ref=e11]: CONTROL
+      - button "SAMPLE" [ref=e12] [cursor=pointer]
+      - button "STEP" [ref=e13] [cursor=pointer]
+    - generic [ref=e14]:
+      - generic [ref=e15]: BRIGHTNESS
+      - generic [ref=e16]:
+        - slider [ref=e17] [cursor=pointer]: "30"
+        - generic [ref=e18]: 30%
+    - generic [ref=e19]:
+      - generic [ref=e20]: TEST PIXEL
+      - generic [ref=e21]:
+        - spinbutton [ref=e22]: "0"
+        - spinbutton [ref=e23]: "0"
+        - button "FIRE" [ref=e24] [cursor=pointer]
+    - generic [ref=e25]:
+      - generic [ref=e26]: STATUS
+      - generic [ref=e27]:
+        - generic [ref=e28]: WS
+        - generic [ref=e29]: DISCONNECTED
+        - generic [ref=e30]: SEQ
+        - generic [ref=e31]: "--"
+        - generic [ref=e32]: FPS
+        - generic [ref=e33]: "--"
+        - generic [ref=e34]: LAYER
+        - generic [ref=e35]: "--"
+    - generic [ref=e36]:
+      - generic [ref=e37]: LAYER LEGEND
+      - generic [ref=e38]:
+        - generic [ref=e41]: L1 INPUT — 28×28 ×1 • 784 LEDs
+        - generic [ref=e44]: L2 CONV1 — 24×24 ×4 • 2304 LEDs
+        - generic [ref=e47]: L3 POOL1 — 12×12 ×4 • 576 LEDs
+        - generic [ref=e50]: L4 CONV2 — 8×8 ×12 • 768 LEDs
+        - generic [ref=e53]: L5 POOL2 — 4×4 ×12 • 192 LEDs
+        - generic [ref=e56]: L6 OUTPUT — 1×10 • 10 LEDs
+  - complementary [ref=e57]
+  - complementary [ref=e58]
+  - complementary [ref=e59]
