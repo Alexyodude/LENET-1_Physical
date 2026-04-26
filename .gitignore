@@ -53,3 +53,7 @@ desktop.ini
 
 # Claude Code local settings (un-ignore selectively later if you want to share)
 .claude/
+
+# Playwright MCP artifacts (snapshots, console logs, screenshots from automated testing)
+.playwright-mcp/
+page-*.png
