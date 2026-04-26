@@ -1,5 +1,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { setupArchOverlay } from "./arch.js";
+import { setupArchPanel } from "./panel.js";
+import { setupPhysicalBox } from "./box.js";
+import { setupFaultControls } from "./faults.js";
+import { createHistoryStore } from "./history-store.js";
+import { setupHistoryUI } from "./history-ui.js";
+
+window.twinEvents = window.twinEvents || new EventTarget();
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -304,6 +312,7 @@ function connectWS() {
   ws.addEventListener("message", (ev) => {
     const f = JSON.parse(ev.data);
     handleFrame(f);
+    window.twinEvents.dispatchEvent(new CustomEvent("frame", { detail: f }));
   });
 }
 
@@ -312,10 +321,6 @@ function handleFrame(f) {
   currentLayer = f.layer;
   seqEl.textContent = f.seq;
   layerEl.textContent = f.layer;
-
-  // Broadcast to panel.js and other modules via twinEvents
-  if (!window.twinEvents) window.twinEvents = new EventTarget();
-  window.twinEvents.dispatchEvent(new CustomEvent("frame", { detail: f }));
 
   fpsCounter++;
 
@@ -551,10 +556,12 @@ async function init() {
   resize();
 
   // Fetch mapping and place LEDs at real mm positions
+  let mapping = { layers: {}, chains: [] };
   try {
     const resp = await fetch("/mapping");
     if (resp.ok) {
       const data = await resp.json();
+      mapping = data;
       if (data.layers && Object.keys(data.layers).length > 0) {
         placeLEDsFromMapping(data);
       } else {
@@ -564,6 +571,9 @@ async function init() {
   } catch {
     placeLEDsFallback();
   }
+
+  // Expose global twin state for modules
+  window.twin = { scene, camera, ledMeshes, mapping };
 
   // Also sync brightness from server
   try {
@@ -575,6 +585,25 @@ async function init() {
       brightVal.textContent = `${pct}%`;
     }
   } catch { /* ignore */ }
+
+  // Wire up Twin v2 modules
+  setupArchOverlay(scene, mapping);
+
+  const archPanelHost = document.getElementById("arch-panel-host");
+  if (archPanelHost) setupArchPanel(archPanelHost);
+
+  setupPhysicalBox(scene, mapping);
+
+  const faultHost = document.getElementById("fault-panel-host");
+  if (faultHost) setupFaultControls(faultHost);
+
+  const historyHost = document.getElementById("history-panel-host");
+  if (historyHost) {
+    const store = createHistoryStore();
+    // Adapt store: history-ui expects store.listRecords but history-store exports refreshList
+    store.listRecords = store.refreshList;
+    setupHistoryUI(historyHost, store, ledMeshes);
+  }
 
   connectWS();
   animate();

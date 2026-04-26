@@ -35,6 +35,32 @@ html, body {
   background: var(--border);
 }
 
+/* ── Right panels stack ── */
+#right-panels {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  background: var(--bg-panel);
+}
+
+#right-panels #panel {
+  overflow-y: visible;
+  flex-shrink: 0;
+}
+
+.v2-panel {
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.v2-panel--history {
+  flex: 1;
+  min-height: 180px;
+  display: flex;
+}
+
 /* ── Scene wrapper ── */
 #scene-wrap {
   position: relative;
