@@ -135,10 +135,11 @@ export async function startStaticMode() {
 
   // Tell ONNX runtime where its WASM lives (CDN).
   try {
-    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/";
+    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/";
     ort.env.wasm.numThreads = 1;
     ort.env.wasm.simd = true;
     ort.env.wasm.proxy = false;
+    ort.env.logLevel = "verbose";
   } catch (e) {
     console.error("[static-mode] env config failed:", e);
   }
@@ -150,10 +151,14 @@ export async function startStaticMode() {
   ]);
   mapping = m;
   samples = s;
-  console.log("[static-mode] loaded", samples.length, "samples; creating ORT session");
+  console.log("[static-mode] loaded", samples.length, "samples; fetching model bytes");
+
+  // Fetch ONNX as bytes first so we can verify the file actually arrived.
+  const modelBytes = new Uint8Array(await fetch("./lenet5.onnx").then(r => r.arrayBuffer()));
+  console.log("[static-mode] model bytes:", modelBytes.byteLength);
 
   try {
-    session = await ort.InferenceSession.create("./lenet5.onnx", {
+    session = await ort.InferenceSession.create(modelBytes, {
       executionProviders: ["wasm"],
       graphOptimizationLevel: "all",
     });
