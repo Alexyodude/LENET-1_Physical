@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual envs
+.venv/
+venv/
+env/
+.env
+
+# Trained model artifacts (commit weights only when intentional)
+*.pt
+*.pth
+*.onnx
+*.tflite
+mnist_data/
+
+# Node / web frontend
+node_modules/
+dist/
+.next/
+.parcel-cache/
+.playwright/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OMC working state (local-only, not part of the project)
+.omc/
+
+# Claude Code local settings (un-ignore selectively later if you want to share)
+.claude/
