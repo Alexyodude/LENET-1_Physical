@@ -1,16 +1,36 @@
 # LENET-1 Physical
 
-Physical, illuminated visualization of a LeNet-style convolutional neural
-network performing live MNIST digit classification on a Raspberry Pi 4.
+Physical illuminated LeNet-5 visualization on a Raspberry Pi 4.
 
-~4634 WS2812B addressable LEDs arranged into 6 layer-slabs (28×28×1 →
-24×24×4 → 12×12×4 → 8×8×12 → 4×4×12 → 1×10), driven directly from Pi 4
-GPIOs via DMA-bit-bang multi-channel output across 17 parallel chains.
-A digital twin (3D + per-layer 2D slices) runs on a small web server on
-the Pi for real-time debugging.
+## Quick start (dev machine, mock LEDs)
 
-## Status
+```
+uv sync --extra dev
+uv run python -m lenet1_physical.model.train --epochs 10
+uv run python -m lenet1_physical.main \
+   --mapping config/mapping.example.yaml \
+   --weights weights/lenet5.pt \
+   --mode mock
+```
 
-Design phase. See [the spec](docs/superpowers/specs/2026-04-26-lenet-physical-design.md).
+Open http://127.0.0.1:8080. Click **Sample**, then **Step** repeatedly.
 
-Implementation plan and code will land after the spec is reviewed.
+## Run on hardware (Raspberry Pi 4)
+
+1. Wire LEDs per the mapping config.
+2. Bring up one chain at a time: `sudo uv run python -m lenet1_physical.scripts.single_chain_walk --gpio 18 --count 30`
+3. Bring up all chains in one layer: `sudo uv run python -m lenet1_physical.scripts.single_layer_walk --mapping config/mapping.example.yaml --layer L2`
+4. Power-soak: `sudo uv run python -m lenet1_physical.scripts.power_stress --mapping config/mapping.example.yaml --duration 600`
+5. Run for real: `sudo uv run python -m lenet1_physical.main --mapping config/mapping.example.yaml --weights weights/lenet5.pt --mode hardware`
+
+## Tests
+
+```
+uv run pytest -q
+npx playwright test --config=tests/e2e/playwright.config.ts
+```
+
+## Spec & plan
+
+- [Design spec](docs/superpowers/specs/2026-04-26-lenet-physical-design.md)
+- [Implementation plan](docs/superpowers/plans/2026-04-26-lenet-physical.md)
