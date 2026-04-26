@@ -28,6 +28,8 @@ from lenet1_physical.mapping.schema import Mapping
 from lenet1_physical.mapping.validator import validate
 from lenet1_physical.model.inference import LeNetInference
 from lenet1_physical.twin import server as twin_server
+from lenet1_physical.twin.faults import FaultStore, FaultedDriver
+from lenet1_physical.twin.history import HistoryRecorder
 from lenet1_physical.twin.server import build_app
 
 
@@ -89,7 +91,9 @@ async def _serve(app, host: str, port: int) -> None:
     await uvicorn.Server(cfg).serve()
 
 
-async def _run(orch: Orchestrator, app, args) -> None:
+async def _run(orch: Orchestrator, app, args, recorder: HistoryRecorder | None = None) -> None:
+    if recorder is not None:
+        recorder.start()
     server_task = asyncio.create_task(_serve(app, args.host, args.port))
     if args.demo:
         demo_task = asyncio.create_task(
@@ -124,7 +128,9 @@ def main() -> None:
     validate(mapping)
 
     bus = FrameBus()
-    driver = _make_driver(mapping, args.mode, bus)
+    fault_store = FaultStore()
+    raw_driver = _make_driver(mapping, args.mode, bus)
+    driver = FaultedDriver(raw_driver, fault_store)
     inference = LeNetInference(args.weights)
     samples = _load_mnist_samples()
 
@@ -149,11 +155,13 @@ def main() -> None:
         except Exception as exc:  # noqa: BLE001
             print(f"[warn] GPIO buttons not attached: {exc}", flush=True)
 
-    app = build_app(bus, args.mapping)
+    recorder = HistoryRecorder(bus, max_records=50)
+
+    app = build_app(bus, args.mapping, fault_store=fault_store, history_recorder=recorder)
     mode_label = {"simulate": "PC simulator", "mock": "PC simulator", "hardware": "REAL HARDWARE"}[args.mode]
     print(f"[info] {mode_label} | twin: http://{args.host}:{args.port}/ | "
           f"demo={'on' if args.demo else 'off'}", flush=True)
-    asyncio.run(_run(orch, app, args))
+    asyncio.run(_run(orch, app, args, recorder=recorder))
 
 
 if __name__ == "__main__":

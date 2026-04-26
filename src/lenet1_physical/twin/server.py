@@ -32,7 +32,7 @@ class _BrightnessBody(BaseModel):
     value: float
 
 
-def build_app(bus: FrameBus, mapping_path: Path | None) -> FastAPI:
+def build_app(bus: FrameBus, mapping_path: Path | None, fault_store=None, history_recorder=None) -> FastAPI:
     global _mapping_data
     if mapping_path is not None:
         raw = yaml.safe_load(Path(mapping_path).read_text())
@@ -41,6 +41,14 @@ def build_app(bus: FrameBus, mapping_path: Path | None) -> FastAPI:
         _mapping_data = None
 
     app = FastAPI()
+
+    if fault_store is not None:
+        from lenet1_physical.twin.faults import register_fault_routes
+        register_fault_routes(app, fault_store)
+
+    if history_recorder is not None:
+        from lenet1_physical.twin.history import register_history_routes
+        register_history_routes(app, history_recorder)
 
     @app.get("/healthz")
     async def healthz() -> dict:
