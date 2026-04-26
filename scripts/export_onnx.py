@@ -34,13 +34,20 @@ def main() -> None:
     wrapped = LeNetForExport(model)
     wrapped.train(False)
     dummy = torch.zeros(1, 1, 28, 28)
+    # dynamo=False forces the legacy TorchScript-based exporter which inlines
+    # all weights into the single .onnx file (no companion .data sidecar).
+    # That's required for browser ORT to load the model from a single fetch.
     torch.onnx.export(
         wrapped, dummy, str(out),
         input_names=["input"],
         output_names=["L1", "L2", "L3", "L4", "L5", "L6"],
         dynamic_axes={"input": {0: "batch"}},
         opset_version=14,
+        dynamo=False,
     )
+    sidecar = out.with_suffix(out.suffix + ".data")
+    if sidecar.exists():
+        sidecar.unlink()
     print(f"saved {out} ({out.stat().st_size} bytes)")
 
 
