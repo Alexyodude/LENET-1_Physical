@@ -143,6 +143,7 @@ def main() -> None:
     twin_server.orchestrator_hooks["step"] = lambda: orch.on_step()
     twin_server.orchestrator_hooks["test_pixel"] = orch.test_pixel
     twin_server.orchestrator_hooks["brightness"] = orch.set_brightness
+    twin_server.orchestrator_hooks["sample_image"] = orch.on_sample_with_image
 
     if args.mode == "hardware" and sys.platform == "linux":
         try:
