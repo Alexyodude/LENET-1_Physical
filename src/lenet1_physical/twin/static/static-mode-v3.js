@@ -117,14 +117,23 @@ async function inferImage(px, { layerDelayMs = 600 } = {}) {
   return predicted;
 }
 
+let paused = false;
+
 async function inferOnce() {
   const sample = samples[Math.floor(Math.random() * samples.length)];
   await inferImage(sample.image);
   await sleep(2000);
 }
 
+async function inferRandom() {
+  if (!samples) return -1;
+  const sample = samples[Math.floor(Math.random() * samples.length)];
+  return inferImage(sample.image, { layerDelayMs: 220 });
+}
+
 async function loop() {
   while (!stopped) {
+    if (paused) { await sleep(150); continue; }
     try {
       await inferOnce();
     } catch (e) {
@@ -192,6 +201,13 @@ export async function startStaticMode() {
     throw new Error(`InferenceSession.create failed: ${msg}`);
   }
   console.log("[static-mode] ORT session created; inputs:", session.inputNames, "outputs:", session.outputNames);
+
+  // Drawing canvas + transport controls.
+  window.staticInferImage = (image28) => inferImage(image28, { layerDelayMs: 220 });
+  window.staticPause      = () => { paused = true; };
+  window.staticResume     = () => { paused = false; };
+  window.staticIsPaused   = () => paused;
+  window.staticStep       = () => inferRandom();
 
   // Expose a single-shot inference function for the drawing canvas to call.
   // Returns the predicted digit.

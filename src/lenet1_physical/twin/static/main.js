@@ -655,6 +655,56 @@ document.getElementById("btn-step").addEventListener("click", () => {
   fetch("/step", { method: "POST" });
 });
 
+// ── Transport (play / pause / step forward) ──────────────────────────────
+{
+  const playBtn = document.getElementById("btn-play");
+  const fwdBtn  = document.getElementById("btn-fwd");
+  const playIco  = playBtn?.querySelector(".ico-play");
+  const pauseIco = playBtn?.querySelector(".ico-pause");
+
+  function setPlaying(playing) {
+    if (!playBtn) return;
+    playBtn.setAttribute("aria-pressed", String(playing));
+    if (playIco)  playIco.hidden  = playing;
+    if (pauseIco) pauseIco.hidden = !playing;
+    playBtn.title = playing ? "Pause auto-cycle" : "Play auto-cycle";
+    playBtn.setAttribute("aria-label", playing ? "Pause" : "Play");
+  }
+
+  // Default: cycling.
+  setPlaying(true);
+
+  playBtn?.addEventListener("click", () => {
+    const isLive = window.twinMode === "live";
+    if (isLive) {
+      // Live mode: toggle between SAMPLE (resume) and no-op (pause has no
+      // backend hook in v1; we just stop emitting clicks).
+      const nowPlaying = playBtn.getAttribute("aria-pressed") !== "true";
+      setPlaying(nowPlaying);
+      if (nowPlaying) fetch("/sample", { method: "POST", headers: {"content-type": "application/json"}, body: "{}" });
+    } else {
+      // Static mode: drive the in-browser loop.
+      const paused = typeof window.staticIsPaused === "function" ? window.staticIsPaused() : false;
+      if (paused) {
+        window.staticResume?.();
+        setPlaying(true);
+      } else {
+        window.staticPause?.();
+        setPlaying(false);
+      }
+    }
+  });
+
+  fwdBtn?.addEventListener("click", () => {
+    const isLive = window.twinMode === "live";
+    if (isLive) {
+      fetch("/sample", { method: "POST", headers: {"content-type": "application/json"}, body: "{}" });
+    } else if (typeof window.staticStep === "function") {
+      window.staticStep();
+    }
+  });
+}
+
 const brightEl  = document.getElementById("brightness");
 const brightVal = document.getElementById("brightness-value");
 brightEl.addEventListener("input", () => {

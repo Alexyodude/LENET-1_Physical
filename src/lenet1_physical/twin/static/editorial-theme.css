@@ -149,6 +149,23 @@ html, body {
 }
 .section-label::after { display: none; }
 
+/* ── Transport row (play / pause / step forward) ─────────────────────── */
+.transport-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.transport-btn {
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+  padding: 6px !important;
+}
+.transport-btn[aria-pressed="true"] {
+  background: var(--text) !important;
+  color: var(--bg-panel) !important;
+}
+
 /* ── Buttons: flat, paper-stamped ─────────────────────────────────────── */
 .btn-primary, .btn-secondary, .camera-preset-btn {
   background: var(--bg-panel) !important;

@@ -40,8 +40,12 @@
 
       <section class="panel-section">
         <div class="section-label">CONTROL</div>
+        <div class="transport-row">
+          <button id="btn-play"   class="btn-secondary transport-btn" title="Play / Pause auto-cycle" aria-label="Play"><span class="ico-play">▶</span><span class="ico-pause" hidden>❚❚</span></button>
+          <button id="btn-fwd"    class="btn-secondary transport-btn" title="Step forward (next sample)" aria-label="Step forward">⏭</button>
+        </div>
         <button id="btn-sample" class="btn-primary">SAMPLE</button>
-        <button id="btn-step" class="btn-secondary">STEP</button>
+        <button id="btn-step" class="btn-secondary">STEP LAYER</button>
       </section>
 
       <section class="panel-section">
@@ -98,6 +102,6 @@
   <div id="tooltip"></div>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <script type="module" src="./main.js?v=mirror"></script>
+  <script type="module" src="./main.js?v=transport"></script>
 </body>
 </html>
