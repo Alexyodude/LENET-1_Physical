@@ -1,0 +1,243 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * Futurist metal theme — overlays the base style.css with a brushed
+ * gunmetal aesthetic, bevels, chrome borders, and electric-cyan accents.
+ * ───────────────────────────────────────────────────────────────────── */
+
+:root {
+  --bg:           #07090d;
+  --bg-panel:     #131923;
+  --bg-section:  #1a2230;
+  --border:       #34404f;
+  --border-hi:    #4f5f74;
+  --accent:       #4cd2ff;
+  --accent-dim:   #1f6c8a;
+  --accent-glow:  rgba(76, 210, 255, 0.4);
+  --text:         #d6e2ef;
+  --text-dim:     #6a7a8e;
+  --metal-hi:     rgba(255, 255, 255, 0.08);
+  --metal-shadow: rgba(0, 0, 0, 0.65);
+  --amber:        #ffaa44;
+}
+
+html, body {
+  background:
+    radial-gradient(ellipse at 30% 0%, #122131 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, #16101e 0%, transparent 55%),
+    linear-gradient(180deg, #07090d 0%, #050709 100%);
+}
+
+/* ── Right panel: brushed steel ───────────────────────────────────────── */
+#right-panels,
+#panel {
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.018) 25%, transparent 50%, rgba(255,255,255,0.018) 75%, transparent 100%),
+    linear-gradient(180deg, #1d2532 0%, #131a25 100%) !important;
+  box-shadow: inset 1px 0 0 var(--metal-hi), inset -1px 0 0 rgba(0,0,0,0.4);
+}
+
+#panel-header {
+  background:
+    linear-gradient(180deg, #2a3445 0%, #1a2230 100%);
+  border-bottom: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 var(--metal-hi), 0 1px 0 rgba(0,0,0,0.5);
+}
+
+.panel-title {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.panel-section {
+  background:
+    linear-gradient(180deg, #1c2433 0%, #161e2b 100%);
+  border-bottom: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.025);
+}
+
+.section-label {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.section-label::after {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 1px;
+  margin-left: 8px;
+  background: linear-gradient(90deg, var(--accent-dim), transparent);
+  vertical-align: middle;
+}
+
+/* ── Buttons: raised metal with bevel ─────────────────────────────────── */
+.btn-primary, .btn-secondary, .camera-preset-btn {
+  background:
+    linear-gradient(180deg, #2a3a4e 0%, #1a2434 100%) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.5),
+    0 1px 2px rgba(0,0,0,0.6);
+  color: var(--accent);
+  text-shadow: 0 0 6px rgba(76,210,255,0.35);
+  transition: background 120ms, box-shadow 120ms, transform 80ms;
+}
+
+.btn-primary {
+  background:
+    linear-gradient(180deg, #4cd2ff 0%, #1c8fbf 100%) !important;
+  color: #07090d !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  border-color: var(--accent) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 0 18px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #7be0ff 0%, #2faad9 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    0 0 28px var(--accent-glow);
+}
+
+.btn-secondary:hover, .camera-preset-btn:hover {
+  background: linear-gradient(180deg, #354860 0%, #1f2a3d 100%) !important;
+  border-color: var(--border-hi) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 0 14px rgba(76,210,255,0.18);
+}
+
+.btn-primary:active, .btn-secondary:active, .camera-preset-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.5),
+    inset 0 0 0 1px var(--border);
+}
+
+/* ── Inputs: inset metal ──────────────────────────────────────────────── */
+.test-row input[type="number"], #test-chain, #test-pos {
+  background: linear-gradient(180deg, #0d121a 0%, #131a25 100%) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6), 0 1px 0 var(--metal-hi);
+  color: var(--text) !important;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+/* ── Status panel: chiseled feel ──────────────────────────────────────── */
+.status-key { letter-spacing: 2px; text-transform: uppercase; }
+.status-val { font-weight: 500; }
+.status-connected { text-shadow: 0 0 8px rgba(0,230,118,0.5); }
+.status-disconnected { text-shadow: 0 0 8px rgba(255,68,68,0.5); }
+
+/* ── Tabs: chrome bar ─────────────────────────────────────────────────── */
+.desktop-tabs, .mobile-drawer__tabs {
+  background:
+    linear-gradient(180deg, #232c3c 0%, #181f2c 100%) !important;
+  border-bottom: 1px solid var(--border);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.4), inset 0 1px 0 var(--metal-hi);
+}
+
+.desktop-tab, .mobile-drawer__tab {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+  font-weight: 600;
+}
+
+.desktop-tab--active, .mobile-drawer__tab--active {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Mobile drawer: heavier chrome edge ──────────────────────────────── */
+.mobile-drawer {
+  background:
+    linear-gradient(180deg, #1d2532 0%, #131a25 100%);
+  border-top: 1px solid var(--border-hi);
+  box-shadow:
+    inset 0 1px 0 var(--metal-hi),
+    0 -8px 24px rgba(0,0,0,0.5);
+}
+
+.mobile-drawer__pill {
+  background: linear-gradient(90deg, transparent, var(--border-hi), transparent);
+  width: 46px;
+  height: 4px;
+  border-radius: 2px;
+  box-shadow: 0 1px 0 var(--metal-hi);
+}
+
+/* ── Slice canvases: glassy frame ─────────────────────────────────────── */
+.slice-item canvas {
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 0 1px var(--metal-hi), 0 0 12px rgba(76,210,255,0.06);
+  border-radius: 2px;
+}
+.slice-group-label {
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-shadow: 0 0 6px var(--accent-glow);
+}
+
+/* ── Resizer: chrome strip ────────────────────────────────────────────── */
+#panel-resizer {
+  background: linear-gradient(180deg, #2a3445 0%, #131923 50%, #2a3445 100%);
+}
+#panel-resizer:hover, #panel-resizer.dragging {
+  background: linear-gradient(180deg, #3a4f6c 0%, #1f2c40 50%, #3a4f6c 100%);
+}
+
+/* ── Prediction overlay: amber retina pop ─────────────────────────────── */
+#prediction-overlay {
+  color: var(--amber);
+  text-shadow:
+    0 0 30px rgba(255,170,68,0.7),
+    0 0 60px rgba(255,170,68,0.35),
+    0 0 90px rgba(255,170,68,0.15);
+}
+
+/* ── Static-mode banner: holographic ──────────────────────────────────── */
+#static-mode-banner {
+  background: linear-gradient(180deg, rgba(76,210,255,0.08) 0%, rgba(7,9,13,0.8) 100%) !important;
+  border: 1px solid var(--accent-dim) !important;
+  color: var(--accent) !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 0 6px var(--accent-glow);
+}
+
+/* ── Scrollbars: thin chrome ──────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hi) transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--border-hi), var(--border));
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-dim), var(--border-hi));
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Layer legend rows: subtle data-row look ─────────────────────────── */
+.legend-row {
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(52, 64, 79, 0.3);
+}
+.legend-swatch {
+  box-shadow: 0 0 6px currentColor, inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* ── Tooltip: glass card ──────────────────────────────────────────────── */
+#tooltip {
+  background: linear-gradient(180deg, rgba(29,37,50,0.96) 0%, rgba(19,25,35,0.96) 100%) !important;
+  border: 1px solid var(--border-hi) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 var(--metal-hi);
+  backdrop-filter: blur(8px);
+}
