@@ -17,7 +17,7 @@
 }
 
 .mobile-drawer--expanded {
-  height: 60vh;
+  height: 50vh;
 }
 
 /* show only on mobile */
@@ -109,6 +109,6 @@
 
   .mobile-drawer--expanded ~ #scene-wrap,
   body.drawer-expanded #scene-wrap {
-    height: calc(100vh - 60vh);
+    height: calc(100vh - 50vh);
   }
 }

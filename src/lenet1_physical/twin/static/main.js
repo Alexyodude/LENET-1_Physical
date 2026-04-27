@@ -546,6 +546,16 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
+// Watch the scene wrapper itself so the canvas resizes when the drawer
+// opens/closes, the panel is resized, or any other layout shift happens
+// without firing a window-level resize event.
+{
+  const wrap = document.getElementById("scene-wrap");
+  if (wrap && typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(() => resize()).observe(wrap);
+  }
+}
+
 // ── Panel drag-resize ────────────────────────────────────────────────────
 // Right column width is driven by the CSS variable --panel-width.
 // Persisted in localStorage. Hidden on mobile via CSS.
