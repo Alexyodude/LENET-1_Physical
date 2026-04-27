@@ -174,6 +174,26 @@ async function stepLayer() {
 
 function resetManualCursor() { manual = null; }
 
+// "New sample": pick a fresh image, run inference, dispatch L1 only.
+// Subsequent ⏭ clicks step from L2 onward through cached results.
+async function newSampleShowL1() {
+  if (!session || !samples) return null;
+  const sample = samples[Math.floor(Math.random() * samples.length)];
+  const px = sample.image;
+  const norm = new Float32Array(784);
+  for (let i = 0; i < 784; i++) {
+    norm[i] = ((px[i] / 255.0) - MNIST_MEAN) / MNIST_STD;
+  }
+  const inputTensor = new ort.Tensor("float32", norm, [1, 1, 28, 28]);
+  const results = await session.run({ input: inputTensor });
+  manual = { results, layerIdx: 0, predictedDigit: -1 };
+  const out = results.L1;
+  if (!out) return manual.layerIdx;
+  const frame = activationsToFrame("L1", out.data, out.dims);
+  dispatchFrame(frame);
+  return manual.layerIdx;
+}
+
 async function loop() {
   while (!stopped) {
     if (paused) { await sleep(150); continue; }
@@ -251,6 +271,7 @@ export async function startStaticMode() {
   window.staticResume     = () => { paused = false; resetManualCursor(); };
   window.staticIsPaused   = () => paused;
   window.staticStep       = () => stepLayer();
+  window.staticNewSample  = () => newSampleShowL1();
   window.staticManualState = () => manual && {
     layerIdx: manual.layerIdx,
     layer: LAYER_ORDER[manual.layerIdx] || null,

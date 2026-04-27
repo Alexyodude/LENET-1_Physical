@@ -641,18 +641,28 @@ function animate() {
 
 // ── Controls ──────────────────────────────────────────────────────────────────
 
-document.getElementById("btn-sample").addEventListener("click", () => {
+// NEW SAMPLE: pick a fresh digit, paint only L1. Subsequent ⏭ clicks
+// step through L2..L6 from the cached activations.
+document.getElementById("btn-sample").addEventListener("click", async () => {
   predOverlay.classList.remove("visible");
   predictedDigit = null;
-  fetch("/sample", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: "{}",
-  });
-});
-
-document.getElementById("btn-step").addEventListener("click", () => {
-  fetch("/step", { method: "POST" });
+  if (window.twinMode === "live") {
+    // Server picks the sample, then we paint exactly one step (L1).
+    await fetch("/sample", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    fetch("/step", { method: "POST" });
+    return;
+  }
+  // Static mode: auto-pause then run a single inference and paint L1.
+  if (typeof window.staticPause === "function" && !window.staticIsPaused?.()) {
+    window.staticPause();
+  }
+  if (typeof window.staticNewSample === "function") {
+    await window.staticNewSample();
+  }
 });
 
 // ── Transport (play / pause / step forward) ──────────────────────────────
@@ -865,7 +875,7 @@ async function init() {
       if (el) el.style.display = "none";
     }
     // Disable buttons that POST to nonexistent endpoints.
-    for (const id of ["btn-sample", "btn-step", "btn-test-pixel"]) {
+    for (const id of ["btn-test-pixel"]) {
       const el = document.getElementById(id);
       if (el) { el.disabled = true; el.title = "disabled in static mode"; }
     }
