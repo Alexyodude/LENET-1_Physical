@@ -23,7 +23,7 @@ const LAYER_THEMES = {
 const LAYER_ORDER = ["L1", "L2", "L3", "L4", "L5", "L6"];
 const MNIST_MEAN = 0.1307;
 const MNIST_STD  = 0.3081;
-const BRIGHTNESS_CAP = 0.3;
+const BRIGHTNESS_CAP = 0.75;  // visualization-only — hardware caps elsewhere
 
 let session = null;
 let mapping = null;
