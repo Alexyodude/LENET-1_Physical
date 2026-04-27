@@ -83,9 +83,11 @@ function dispatchFrame(frame) {
   window.twinEvents.dispatchEvent(new CustomEvent("frame", { detail: frame }));
 }
 
-async function inferOnce() {
-  const sample = samples[Math.floor(Math.random() * samples.length)];
-  const px = sample.image; // 784 uint8 values
+// Run a single 784-element uint8 image through the model, dispatching one
+// frame per layer. Reused by both the auto-cycle loop and the drawing canvas
+// (window.staticInferImage).
+async function inferImage(px, { layerDelayMs = 600 } = {}) {
+  if (!session) throw new Error("static-mode session not ready");
   const norm = new Float32Array(784);
   for (let i = 0; i < 784; i++) {
     norm[i] = ((px[i] / 255.0) - MNIST_MEAN) / MNIST_STD;
@@ -93,20 +95,31 @@ async function inferOnce() {
   const inputTensor = new ort.Tensor("float32", norm, [1, 1, 28, 28]);
   const result = await session.run({ input: inputTensor });
 
+  let predicted = -1;
   for (const layer of LAYER_ORDER) {
-    if (stopped) return;
+    if (stopped) return predicted;
     const out = result[layer];
     if (!out) continue;
     let dims = out.dims;
-    let data = out.data;
+    const data = out.data;
     if (layer === "L6") {
-      // L6 comes back as (1, 10) — reshape to (1, 1, 10).
       dims = [1, 1, 10];
+      let bestIdx = 0, bestVal = -Infinity;
+      for (let i = 0; i < 10; i++) {
+        if (data[i] > bestVal) { bestVal = data[i]; bestIdx = i; }
+      }
+      predicted = bestIdx;
     }
     const frame = activationsToFrame(layer, data, dims);
     dispatchFrame(frame);
-    await sleep(600);
+    if (layerDelayMs > 0) await sleep(layerDelayMs);
   }
+  return predicted;
+}
+
+async function inferOnce() {
+  const sample = samples[Math.floor(Math.random() * samples.length)];
+  await inferImage(sample.image);
   await sleep(2000);
 }
 
@@ -179,6 +192,10 @@ export async function startStaticMode() {
     throw new Error(`InferenceSession.create failed: ${msg}`);
   }
   console.log("[static-mode] ORT session created; inputs:", session.inputNames, "outputs:", session.outputNames);
+
+  // Expose a single-shot inference function for the drawing canvas to call.
+  // Returns the predicted digit.
+  window.staticInferImage = (image28) => inferImage(image28, { layerDelayMs: 220 });
 
   // Decorate the page so visitors know they're in static mode.
   const banner = document.createElement("div");

@@ -322,7 +322,7 @@ async function startStaticFallback() {
   wsStatusEl.textContent = "STATIC";
   wsStatusEl.className = "status-val status-connected";
   try {
-    const mod = await import("./static-mode-v2.js?v=cms");
+    const mod = await import("./static-mode-v3.js");
     // Bridge: route static-mode frames through handleFrame too so seq/fps update.
     window.twinEvents.addEventListener("frame", (ev) => handleFrame(ev.detail));
     await mod.startStaticMode();
