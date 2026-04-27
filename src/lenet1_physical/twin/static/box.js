@@ -25,6 +25,8 @@ function snakePositions(fm) {
   const px = pitch_mm[0];
   const py = pitch_mm[1];
   const positions = [];
+  // MNIST row 0 is the TOP of the image; Three.js +Y is up.
+  // Map row 0 → max Y so the digit reads right-side-up.
   if (order === "column_major_snake") {
     // Up-and-down zigzag: col 0 top-to-bottom, col 1 bottom-to-top, ...
     for (let c = 0; c < cols; c++) {
@@ -32,7 +34,7 @@ function snakePositions(fm) {
         const r = c % 2 === 0 ? i : (rows - 1 - i);
         positions.push({
           x: ox + c * px,
-          y: oy + r * py,
+          y: oy + (rows - 1 - r) * py,
           z: oz,
           chainId: chain_id,
           pos: offset_in_chain + c * rows + i,
@@ -46,7 +48,7 @@ function snakePositions(fm) {
         const c = r % 2 === 0 ? i : (cols - 1 - i);
         positions.push({
           x: ox + c * px,
-          y: oy + r * py,
+          y: oy + (rows - 1 - r) * py,
           z: oz,
           chainId: chain_id,
           pos: offset_in_chain + r * cols + i,

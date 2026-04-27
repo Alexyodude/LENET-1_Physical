@@ -152,7 +152,9 @@ function placeLEDsFromMapping(mapping) {
           const key = `${chainId}:${pos}`;
 
           const wx = ox + c * px;
-          const wy = oy + r * py;
+          // MNIST row 0 is the TOP of the image; Three.js +Y is up.
+          // Map row 0 → max Y so the digit reads right-side-up.
+          const wy = oy + (rows - 1 - r) * py;
           const wz = oz;
 
           const mat = new THREE.MeshBasicMaterial({
