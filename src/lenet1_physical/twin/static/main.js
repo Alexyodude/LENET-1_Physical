@@ -430,8 +430,15 @@ function handleFrame(f) {
     updatePrediction(f.deltas);
   }
 
-  // Flush dirty slice canvases via slice-render
-  flushDirtyTo(sliceCtx);
+  // Flush dirty slice canvases via slice-render. The slice canvas entry
+  // (sliceCtx) and pixel buffer (slicePixelData) live in separate maps, so
+  // build a merged view per dirty key.
+  const merged = new Map();
+  for (const [key, entry] of sliceCtx) {
+    const buf = slicePixelData.get(key);
+    if (buf) merged.set(key, { canvas: entry.canvas, rows: entry.rows, cols: entry.cols, buf });
+  }
+  flushDirtyTo(merged);
 }
 
 function ensureFallbackLED(chain, position) {
