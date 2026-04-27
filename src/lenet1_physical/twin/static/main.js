@@ -695,13 +695,50 @@ document.getElementById("btn-step").addEventListener("click", () => {
     }
   });
 
-  fwdBtn?.addEventListener("click", () => {
+  fwdBtn?.addEventListener("click", async () => {
     const isLive = window.twinMode === "live";
     if (isLive) {
-      fetch("/sample", { method: "POST", headers: {"content-type": "application/json"}, body: "{}" });
-    } else if (typeof window.staticStep === "function") {
-      window.staticStep();
+      // Live mode: a "step" advances one layer (existing /step endpoint).
+      fetch("/step", { method: "POST" });
+      return;
     }
+    // Static mode: auto-pause so the loop doesn't trample the manual step,
+    // then advance one layer.
+    if (typeof window.staticPause === "function" && !window.staticIsPaused?.()) {
+      window.staticPause();
+      setPlaying(false);
+    }
+    if (typeof window.staticStep === "function") {
+      const layerIdx = await window.staticStep();
+      updateStepIndicator(layerIdx);
+    }
+  });
+
+  // Live step indicator next to the transport row. Updates on every frame
+  // event so it tracks both manual steps and auto-cycle frames.
+  const stepEl = document.getElementById("step-indicator");
+  const stepLayerEl = document.createElement("strong");
+  if (stepEl) {
+    stepEl.textContent = "STEP — ";
+    stepEl.appendChild(stepLayerEl);
+    const tail = document.createTextNode(" / 6");
+    stepEl.appendChild(tail);
+    stepLayerEl.textContent = "—";
+  }
+  function updateStepIndicator(layerIdx) {
+    if (!stepLayerEl) return;
+    if (layerIdx === null || layerIdx === undefined || layerIdx < 0) {
+      stepLayerEl.textContent = "—";
+      return;
+    }
+    const layerName = ["L1", "L2", "L3", "L4", "L5", "L6"][layerIdx] || "L?";
+    stepLayerEl.textContent = layerName;
+  }
+
+  window.twinEvents.addEventListener("frame", (ev) => {
+    const f = ev.detail;
+    const idx = ["L1", "L2", "L3", "L4", "L5", "L6"].indexOf(f.layer);
+    if (idx >= 0) updateStepIndicator(idx);
   });
 }
 
