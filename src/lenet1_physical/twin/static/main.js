@@ -6,6 +6,12 @@ import { setupPhysicalBox } from "./box.js";
 import { setupFaultControls } from "./faults.js";
 import { createHistoryStore } from "./history-store.js";
 import { setupHistoryUI } from "./history-ui.js";
+import { setupDrawingCanvas } from "./draw.js";
+import { setupCameraPresets } from "./camera-presets.js";
+import { setupMobileDrawer } from "./mobile-drawer.js";
+import { setupFrameDebounce, setupLazyMobile } from "./lazy-load.js";
+import { paintSlice, markDirty, flushDirtyTo } from "./slice-render.js";
+import { setupPerfOverlay } from "./perf-overlay.js";
 
 window.twinEvents = window.twinEvents || new EventTarget();
 
@@ -37,7 +43,7 @@ const ledMeta = new Map();
 const ledMeshes = new Map();
 
 // Slice canvases per layer+fmap
-const sliceCtx = new Map(); // "L2:1" → {ctx, w, h, cols, rows}
+const sliceCtx = new Map(); // "L2:1" → {canvas, cols, rows}
 
 let lastSeq = 0;
 let fpsCounter = 0;
@@ -277,7 +283,7 @@ function ensureSlice(layer, fmapId, rows, cols) {
   item.appendChild(fmLabel);
   fmapsWrap.appendChild(item);
 
-  const entry = { ctx: ctx2d, w: cvs.width, h: cvs.height, cols, rows, pixelSize };
+  const entry = { canvas: cvs, ctx: ctx2d, w: cvs.width, h: cvs.height, cols, rows, pixelSize };
   sliceCtx.set(key, entry);
   return entry;
 }
@@ -412,6 +418,7 @@ function handleFrame(f) {
             buf[idx * 3]     = r;
             buf[idx * 3 + 1] = g;
             buf[idx * 3 + 2] = b;
+            markDirty(meta.layer, meta.fmap);
           }
         }
       }
@@ -423,8 +430,8 @@ function handleFrame(f) {
     updatePrediction(f.deltas);
   }
 
-  // Flush slice canvases
-  flushSlices();
+  // Flush dirty slice canvases via slice-render
+  flushDirtyTo(sliceCtx);
 }
 
 function ensureFallbackLED(chain, position) {
@@ -440,20 +447,7 @@ function ensureFallbackLED(chain, position) {
   ledMeta.set(key, { chain, position, layer: "?", fmap: 0, row: 0, col: position });
 }
 
-function flushSlices() {
-  for (const [key, entry] of sliceCtx.entries()) {
-    const buf = slicePixelData.get(key);
-    if (!buf) continue;
-    const { ctx, cols, rows, pixelSize } = entry;
-    for (let i = 0; i < rows * cols; i++) {
-      const r = buf[i * 3], g = buf[i * 3 + 1], b = buf[i * 3 + 2];
-      const row = Math.floor(i / cols);
-      const col = i % cols;
-      ctx.fillStyle = `rgb(${r},${g},${b})`;
-      ctx.fillRect(col * pixelSize, row * pixelSize, pixelSize, pixelSize);
-    }
-  }
-}
+// flushSlices replaced by flushDirtyTo(sliceCtx) from slice-render.js
 
 function updatePrediction(deltas) {
   if (!deltas.length) return;
@@ -712,6 +706,21 @@ async function init() {
   const archPanelHost = document.getElementById("arch-panel-host");
   if (archPanelHost) setupArchPanel(archPanelHost);
 
+  // Drawing canvas
+  const drawHost = document.getElementById("draw-host");
+  if (drawHost) setupDrawingCanvas(drawHost);
+
+  // Camera presets
+  const cameraPresetsHost = document.getElementById("camera-presets-host");
+  if (cameraPresetsHost) setupCameraPresets(cameraPresetsHost, camera, controls);
+
+  // Performance overlay
+  setupPerfOverlay(document.body);
+
+  // Frame debounce
+  const { dispatchCoalescedFrame } = setupFrameDebounce();
+  window._dispatchCoalescedFrame = dispatchCoalescedFrame;
+
   // Backend-dependent modules: only when live
   if (backendAlive) {
     const faultHost = document.getElementById("fault-panel-host");
@@ -723,6 +732,23 @@ async function init() {
       store.listRecords = store.refreshList;
       setupHistoryUI(historyHost, store, ledMeshes);
     }
+
+    setupLazyMobile({
+      loadFaults: () => {
+        const h = document.getElementById("fault-panel-host");
+        if (h) setupFaultControls(h);
+        return Promise.resolve();
+      },
+      loadHistory: () => {
+        const h = document.getElementById("history-panel-host");
+        if (h) {
+          const store = createHistoryStore();
+          store.listRecords = store.refreshList;
+          setupHistoryUI(h, store, ledMeshes);
+        }
+        return Promise.resolve();
+      },
+    });
   } else {
     // Hide hosts so they don't claim layout space.
     for (const id of ["fault-panel-host", "history-panel-host"]) {
@@ -734,11 +760,19 @@ async function init() {
       const el = document.getElementById(id);
       if (el) { el.disabled = true; el.title = "disabled in static mode"; }
     }
+
+    setupLazyMobile({
+      loadFaults: () => Promise.resolve(),
+      loadHistory: () => Promise.resolve(),
+    });
   }
 
   if (backendAlive) connectWS();
   else startStaticFallback();
   animate();
+
+  // Mobile drawer must be called last, after all panels exist
+  setupMobileDrawer();
 }
 
 init();
