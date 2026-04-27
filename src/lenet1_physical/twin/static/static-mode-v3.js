@@ -97,7 +97,8 @@ async function inferImage(px, { layerDelayMs = 600 } = {}) {
 
   let predicted = -1;
   for (const layer of LAYER_ORDER) {
-    if (stopped) return predicted;
+    // Bail mid-cycle if the user pauses so a manual step isn't trampled.
+    if (stopped || paused) return predicted;
     const out = result[layer];
     if (!out) continue;
     let dims = out.dims;
