@@ -6,7 +6,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: 88px;
   background: var(--bg-panel, #0d1117);
   border-top: 1px solid var(--border, #1e2d3d);
   z-index: 50;
@@ -21,7 +21,7 @@
 }
 
 /* show only on mobile */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .mobile-drawer {
     display: flex;
   }
@@ -95,7 +95,7 @@
 }
 
 /* ── Hide desktop layout on mobile ── */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   #right-panels,
   #panel-resizer,
   #slices-wrap {
@@ -104,7 +104,7 @@
 
   /* give scene room above the drawer */
   #scene-wrap {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 88px);
   }
 
   .mobile-drawer--expanded ~ #scene-wrap,

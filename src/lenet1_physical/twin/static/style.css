@@ -412,6 +412,52 @@ input[type="range"] {
   pointer-events: none;
 }
 
+/* ── Desktop tab bar (top of right panel) ──────────────────────────────── */
+.desktop-tabs {
+  display: flex;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-section);
+}
+.desktop-tab {
+  flex: 1;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms;
+}
+.desktop-tab:hover { color: var(--text); }
+.desktop-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.desktop-slices-pane {
+  display: none;
+  flex: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+.desktop-slices-pane #slices-wrap {
+  height: auto !important;
+  flex: 1;
+  border-top: 0 !important;
+}
+.desktop-slices-pane #slices {
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+}
+.desktop-slices-pane .slice-fmaps { max-width: none; }
+
 /* ── Tablet ─────────────────────────────────────────────────────────────── */
 @media (max-width: 1279px) {
   #prediction-overlay { font-size: 64px; }
@@ -422,7 +468,7 @@ input[type="range"] {
  * scrollable column. Resizer hidden. Touch targets enlarged. Bottom slice
  * strip becomes a horizontal scroll under the controls.
  */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   html, body { font-size: 13px; }
 
   #root {

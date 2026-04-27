@@ -6,7 +6,7 @@ const TABS = ["CONTROLS", "FAULTS", "HISTORY", "SLICES"];
 const SWIPE_THRESHOLD = 40; // px
 
 export function setupMobileDrawer() {
-  if (!matchMedia("(max-width: 768px)").matches) return;
+  if (!matchMedia("(max-width: 1023px)").matches) return;
 
   // ── Build DOM ──────────────────────────────────────────────────────────────
   const drawer = document.createElement("div");

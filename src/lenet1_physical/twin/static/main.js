@@ -9,6 +9,7 @@ import { setupHistoryUI } from "./history-ui.js";
 import { setupDrawingCanvas } from "./draw.js";
 import { setupCameraPresets } from "./camera-presets.js";
 import { setupMobileDrawer } from "./mobile-drawer.js";
+import { setupDesktopTabs } from "./desktop-tabs.js";
 import { setupFrameDebounce, setupLazyMobile } from "./lazy-load.js";
 import { paintSlice, markDirty, flushDirtyTo } from "./slice-render.js";
 import { setupPerfOverlay } from "./perf-overlay.js";
@@ -779,6 +780,7 @@ async function init() {
   animate();
 
   // Mobile drawer must be called last, after all panels exist
+  setupDesktopTabs();
   setupMobileDrawer();
 }
 
