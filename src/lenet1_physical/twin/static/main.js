@@ -151,7 +151,9 @@ function placeLEDsFromMapping(mapping) {
           const pos = offset + snakeIdx;
           const key = `${chainId}:${pos}`;
 
-          const wx = ox + c * px;
+          // Mirror X so the image reads the same way from the default camera
+          // angle as it does on screen (col 0 → max X, on the viewer's left).
+          const wx = ox + (cols - 1 - c) * px;
           // MNIST row 0 is the TOP of the image; Three.js +Y is up.
           // Map row 0 → max Y so the digit reads right-side-up.
           const wy = oy + (rows - 1 - r) * py;

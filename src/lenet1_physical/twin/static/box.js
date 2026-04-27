@@ -33,7 +33,7 @@ function snakePositions(fm) {
       for (let i = 0; i < rows; i++) {
         const r = c % 2 === 0 ? i : (rows - 1 - i);
         positions.push({
-          x: ox + c * px,
+          x: ox + (cols - 1 - c) * px,
           y: oy + (rows - 1 - r) * py,
           z: oz,
           chainId: chain_id,
@@ -47,7 +47,7 @@ function snakePositions(fm) {
       for (let i = 0; i < cols; i++) {
         const c = r % 2 === 0 ? i : (cols - 1 - i);
         positions.push({
-          x: ox + c * px,
+          x: ox + (cols - 1 - c) * px,
           y: oy + (rows - 1 - r) * py,
           z: oz,
           chainId: chain_id,
