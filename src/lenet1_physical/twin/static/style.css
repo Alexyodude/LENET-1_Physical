@@ -34,7 +34,7 @@ html, body {
 #root {
   display: grid;
   grid-template-columns: 1fr 4px var(--panel-width);
-  height: calc(100vh - 160px);
+  height: 100vh;
   gap: 0;
   background: var(--border);
 }
