@@ -1,0 +1,321 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * Editorial / artefact theme — palette, type, and chrome inspired by
+ * https://socius-org.github.io/artefacts/. Warm cream paper, near-black
+ * text, italic display serif, geometric monospace labels. Replaces the
+ * dark-cyan "metal" vibe with a scholarly catalog feel.
+ * ───────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Source+Serif+4:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+:root {
+  /* ── Paper palette ── */
+  --bg:           #EDEAE5;
+  --bg-panel:     #F8F7F4;
+  --bg-section:   #F2F0EB;
+  --bg-soft:      #e8e4dd;
+  --border:       #BBB4A8;
+  --border-hi:    #8a8276;
+  --rule:         rgba(10, 26, 15, 0.10);
+  --text:         #0a1a0f;
+  --text-dim:     #6e7268;
+  --text-muted:   #9a9286;
+  --accent:       #4ADE80;
+  --accent-dim:   #2ea864;
+  --accent-glow:  rgba(74, 222, 128, 0.0); /* no glow in editorial */
+  --red:          #b8302a;
+  --green:        #2ea864;
+  --amber:        #b07a18;
+
+  /* ── Type stacks ── */
+  --serif: "Playfair Display", "Source Serif 4", Georgia, serif;
+  --body:  "Source Serif 4", Georgia, serif;
+  --mono:  "DM Mono", ui-monospace, "JetBrains Mono", monospace;
+  --font-mono: var(--mono);
+
+  --radius: 0;  /* hard corners feel more catalog-like */
+}
+
+/* ── Page surface ─────────────────────────────────────────────────────── */
+html, body {
+  background: var(--bg) !important;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+}
+
+/* ── Right panel ──────────────────────────────────────────────────────── */
+#right-panels,
+#panel {
+  background: var(--bg-panel) !important;
+  box-shadow: none;
+  border-left: 1px solid var(--border);
+  font-family: var(--body);
+}
+
+#panel-header {
+  background: var(--bg-panel) !important;
+  border-bottom: 1px solid var(--border);
+  box-shadow: none;
+  padding: 22px 18px 16px;
+}
+
+.panel-title {
+  font-family: var(--serif) !important;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: 0;
+  color: var(--text);
+  text-shadow: none;
+}
+
+.panel-subtitle {
+  font-family: var(--mono) !important;
+  font-weight: 300;
+  font-size: 9.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────── */
+.panel-section {
+  background: var(--bg-panel) !important;
+  border-bottom: 1px solid var(--rule);
+  box-shadow: none;
+  padding: 14px 18px;
+}
+
+.section-label {
+  font-family: var(--mono) !important;
+  font-weight: 400;
+  font-size: 9.5px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.section-label::after { display: none; }
+
+/* ── Buttons: flat, paper-stamped ─────────────────────────────────────── */
+.btn-primary, .btn-secondary, .camera-preset-btn {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--text) !important;
+  border-radius: 0 !important;
+  color: var(--text) !important;
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+  font-size: 10px !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  padding: 10px 12px;
+  transition: background 120ms, color 120ms;
+}
+.btn-primary {
+  background: var(--text) !important;
+  color: var(--bg-panel) !important;
+}
+.btn-primary:hover {
+  background: var(--accent-dim) !important;
+  border-color: var(--accent-dim) !important;
+}
+.btn-secondary:hover, .camera-preset-btn:hover {
+  background: var(--bg-soft) !important;
+}
+.btn-primary:active, .btn-secondary:active, .camera-preset-btn:active {
+  transform: none;
+  box-shadow: none !important;
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────── */
+.test-row input[type="number"],
+#test-chain, #test-pos {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--text) !important;
+  font-family: var(--mono) !important;
+  padding: 6px 0 !important;
+}
+input[type="range"] { accent-color: var(--text); }
+
+/* ── Status grid ──────────────────────────────────────────────────────── */
+.status-key {
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.status-val {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-shadow: none !important;
+}
+.status-connected    { color: var(--accent-dim); }
+.status-disconnected { color: var(--red); }
+
+/* ── Layer legend ─────────────────────────────────────────────────────── */
+.legend-row {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.4px;
+}
+.legend-swatch {
+  width: 8px; height: 8px;
+  border-radius: 0;
+  box-shadow: none !important;
+}
+.legend-label { color: var(--text-dim); }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────── */
+.desktop-tabs, .mobile-drawer__tabs {
+  background: var(--bg-panel) !important;
+  border-bottom: 1px solid var(--border);
+  box-shadow: none !important;
+}
+.desktop-tab, .mobile-drawer__tab {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+  font-size: 10px !important;
+  letter-spacing: 2.5px !important;
+  text-transform: uppercase;
+  text-shadow: none !important;
+  color: var(--text-muted) !important;
+  border-bottom: 2px solid transparent;
+}
+.desktop-tab--active, .mobile-drawer__tab--active {
+  color: var(--text) !important;
+  border-bottom-color: var(--text) !important;
+  text-shadow: none !important;
+}
+
+/* ── Mobile drawer ────────────────────────────────────────────────────── */
+.mobile-drawer {
+  background: var(--bg-panel) !important;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 12px rgba(10, 26, 15, 0.06) !important;
+}
+.mobile-drawer__pill {
+  background: var(--border) !important;
+  width: 36px;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ── Slice canvases ──────────────────────────────────────────────────── */
+.slice-item canvas {
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #1a1a1a !important;
+}
+.slice-group-label {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 2.4px !important;
+  text-transform: uppercase;
+  color: var(--text-muted) !important;
+  text-shadow: none !important;
+}
+
+/* ── Resizer ──────────────────────────────────────────────────────────── */
+#panel-resizer {
+  background: var(--border) !important;
+}
+#panel-resizer:hover, #panel-resizer.dragging {
+  background: var(--text) !important;
+}
+
+/* ── Prediction overlay: editorial italic numeral ─────────────────────── */
+#prediction-overlay {
+  font-family: var(--serif) !important;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text) !important;
+  text-shadow: none !important;
+  letter-spacing: -2px !important;
+  font-size: 110px !important;
+  line-height: 0.9;
+  font-variant-numeric: oldstyle-nums;
+}
+
+/* ── Static-mode banner ───────────────────────────────────────────────── */
+#static-mode-banner {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--text) !important;
+  font-family: var(--mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase;
+  text-shadow: none !important;
+  padding: 6px 12px !important;
+}
+
+/* ── Tooltip ──────────────────────────────────────────────────────────── */
+#tooltip {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--text) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 8px 24px rgba(10, 26, 15, 0.12) !important;
+  color: var(--text) !important;
+  font-family: var(--mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.8px;
+  backdrop-filter: none !important;
+}
+
+/* ── Scrollbars: thin, low-contrast ──────────────────────────────────── */
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--text); }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Scene wrapper: dark inset frame so LEDs read ─────────────────────── */
+#scene-wrap {
+  background: #0c0d0c;
+  border: 1px solid var(--border);
+}
+
+/* ── Slices wrap: paper inside the tab ────────────────────────────────── */
+#slices-wrap {
+  background: var(--bg-panel) !important;
+}
+#slices {
+  background: var(--bg-panel);
+}
+
+/* ── Brightness label ─────────────────────────────────────────────────── */
+#brightness-value {
+  font-family: var(--mono);
+  font-weight: 400;
+  color: var(--text);
+}
+
+/* ── Generic h1/h2/h3 nudge for any future text ──────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0;
+}

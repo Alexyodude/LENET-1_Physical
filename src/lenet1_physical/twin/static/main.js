@@ -60,7 +60,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x080c10);
+scene.background = new THREE.Color(0x0c0d0c);
 
 // Subtle grid plane for depth
 const gridHelper = new THREE.GridHelper(2000, 40, 0x1e2d3d, 0x111820);
