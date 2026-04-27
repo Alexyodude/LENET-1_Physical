@@ -90,6 +90,54 @@ html, body {
   padding: 14px 18px;
 }
 
+/* v2 panel hosts (arch, fault, draw, history) get the same gutter as
+   .panel-section so labels and canvases don't touch the edge. */
+.v2-panel {
+  padding: 14px 18px;
+  border-top: 1px solid var(--rule) !important;
+}
+.v2-panel:empty { padding: 0; border-top: 0 !important; }
+
+/* Worker-2's input + confidence panels — give them some breathing room
+   inside their host and label spacing. */
+.panel-input-wrap,
+.panel-confidence-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.panel-input-wrap:last-child,
+.panel-confidence-wrap:last-child { margin-bottom: 0; }
+
+.panel-input-label,
+.panel-confidence-label {
+  font-family: var(--mono) !important;
+  font-size: 9.5px !important;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: var(--text-muted) !important;
+  margin-bottom: 4px;
+}
+
+/* Drawing canvas host — extra gutter around the canvas + buttons */
+#draw-host { padding-top: 16px; padding-bottom: 16px; }
+#draw-host > * + * { margin-top: 10px; }
+
+/* Fault controls and history-ui inner content — give them air */
+#fault-panel-host > *,
+#history-panel-host > * {
+  padding: 0;
+}
+
+/* Slices in the desktop tab pane — gutter around the strip */
+.desktop-slices-pane #slices {
+  padding: 18px !important;
+  gap: 18px !important;
+}
+.slice-group + .slice-group { margin-top: 0; }
+.slice-group-label { padding-bottom: 6px; }
+
 .section-label {
   font-family: var(--mono) !important;
   font-weight: 400;
