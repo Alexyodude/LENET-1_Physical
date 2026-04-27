@@ -2,8 +2,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable
 
+import numpy as np
 import yaml
 from fastapi import FastAPI, WebSocket
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -30,6 +32,10 @@ class _TestPixelBody(BaseModel):
 
 class _BrightnessBody(BaseModel):
     value: float
+
+
+class _SampleImageBody(BaseModel):
+    image: list[float]
 
 
 def build_app(bus: FrameBus, mapping_path: Path | None, fault_store=None, history_recorder=None) -> FastAPI:
@@ -99,6 +105,17 @@ def build_app(bus: FrameBus, mapping_path: Path | None, fault_store=None, histor
             return {"error": "no orchestrator wired"}
         fn(body.chain, body.pos, body.r, body.g, body.b)
         return {"ok": True}
+
+    @app.post("/sample-image")
+    async def sample_image(body: _SampleImageBody) -> JSONResponse:
+        if len(body.image) != 784:
+            return JSONResponse(status_code=400, content={"error": "image must have exactly 784 values"})
+        fn = orchestrator_hooks.get("sample_image")
+        if fn is None:
+            return JSONResponse(status_code=200, content={"error": "no orchestrator wired"})
+        arr = np.array(body.image, dtype=np.float32).reshape(28, 28)
+        predicted = fn(arr)
+        return JSONResponse(status_code=200, content={"predicted_digit": predicted})
 
     static_dir = Path(__file__).parent / "static"
     if static_dir.is_dir():

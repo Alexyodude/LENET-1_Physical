@@ -24,6 +24,13 @@ class Orchestrator:
     def set_brightness(self, value: float) -> None:
         self.brightness_cap = max(0.0, min(1.0, value))
 
+    def on_sample_with_image(self, image: np.ndarray) -> int:
+        if image.shape != (28, 28):
+            raise ValueError(f"Expected image shape (28, 28), got {image.shape}")
+        self._activations = self.inference.run(image)
+        self.sm.on_sample()
+        return -1
+
     def on_sample(self, index: int | None = None) -> int:
         rng = np.random.default_rng()
         if index is None:
