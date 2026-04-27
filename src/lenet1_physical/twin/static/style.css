@@ -205,6 +205,20 @@ html, body {
 .btn-secondary:hover { background: #0d1e26; border-color: var(--accent); }
 .btn-secondary:active { transform: scale(0.97); }
 
+/* ── Camera preset grid ── */
+.camera-presets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.camera-preset-btn {
+  width: 100%;
+  padding: 7px 0;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
 /* ── Brightness slider ── */
 .slider-row {
   display: flex;
