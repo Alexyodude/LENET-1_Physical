@@ -320,12 +320,16 @@ input[type="range"] { accent-color: var(--text); }
 }
 
 /* ── Prediction overlay: editorial italic numeral ─────────────────────── */
+/* Sits on top of the dark 3D scene, so it needs a paper-toned color, not
+ * the near-black body text color used elsewhere. */
 #prediction-overlay {
   font-family: var(--serif) !important;
   font-style: italic;
   font-weight: 400;
-  color: var(--text) !important;
-  text-shadow: none !important;
+  color: var(--bg-panel) !important;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    0 0 18px rgba(248, 247, 244, 0.18) !important;
   letter-spacing: -2px !important;
   font-size: 110px !important;
   line-height: 0.9;
