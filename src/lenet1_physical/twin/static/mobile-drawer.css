@@ -1,0 +1,114 @@
+/* ── Mobile drawer ── */
+
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg-panel, #0d1117);
+  border-top: 1px solid var(--border, #1e2d3d);
+  z-index: 50;
+  transition: height 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  flex-direction: column;
+  touch-action: none;
+}
+
+.mobile-drawer--expanded {
+  height: 60vh;
+}
+
+/* show only on mobile */
+@media (max-width: 768px) {
+  .mobile-drawer {
+    display: flex;
+  }
+}
+
+/* ── Drag handle ── */
+.mobile-drawer__handle-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 0 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-drawer__pill {
+  width: 36px;
+  height: 4px;
+  background: var(--border, #1e2d3d);
+  border-radius: 2px;
+}
+
+/* ── Tab bar ── */
+.mobile-drawer__tabs {
+  display: flex;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border, #1e2d3d);
+  height: 40px;
+}
+
+.mobile-drawer__tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim, #4a6080);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: color 150ms, border-color 150ms;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-drawer__tab--active {
+  color: var(--accent, #4488ff);
+  border-bottom-color: var(--accent, #4488ff);
+}
+
+/* ── Body ── */
+.mobile-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-drawer__pane {
+  display: none;
+  padding: 8px;
+  min-height: 100%;
+}
+
+.mobile-drawer__pane--active {
+  display: block;
+}
+
+/* ── Hide desktop layout on mobile ── */
+@media (max-width: 768px) {
+  #right-panels,
+  #panel-resizer,
+  #slices-wrap {
+    display: none !important;
+  }
+
+  /* give scene room above the drawer */
+  #scene-wrap {
+    height: calc(100vh - 60px);
+  }
+
+  .mobile-drawer--expanded ~ #scene-wrap,
+  body.drawer-expanded #scene-wrap {
+    height: calc(100vh - 60vh);
+  }
+}
