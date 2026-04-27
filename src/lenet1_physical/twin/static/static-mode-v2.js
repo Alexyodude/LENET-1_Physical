@@ -33,9 +33,16 @@ let stopped = false;
 
 function logicalToPhysical(layer, fmIdx, row, col) {
   const fm = mapping.layers[layer].feature_maps[fmIdx];
-  const inFmap = (row % 2 === 0)
-    ? row * fm.cols + col
-    : row * fm.cols + (fm.cols - 1 - col);
+  let inFmap;
+  if (fm.order === "column_major_snake") {
+    inFmap = (col % 2 === 0)
+      ? col * fm.rows + row
+      : col * fm.rows + (fm.rows - 1 - row);
+  } else {
+    inFmap = (row % 2 === 0)
+      ? row * fm.cols + col
+      : row * fm.cols + (fm.cols - 1 - col);
+  }
   return [fm.chain_id, fm.offset_in_chain + inFmap];
 }
 

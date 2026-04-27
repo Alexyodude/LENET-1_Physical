@@ -14,25 +14,44 @@ const SLAB_PAD   = 6;    // mm padding around LED extents for each fmap plane
 const SLAB_Z_OFF = -1;   // mm behind LEDs (lower Z)
 const INJ_DIST   = 1000; // mm accumulated chain length before injection marker
 
-// Build snake-order LED positions for a feature map
+// Build snake-order LED positions for a feature map. Iterates the chain in
+// physical order so the routing curve stitches LEDs in the order the wire
+// actually visits them.
 function snakePositions(fm) {
-  const { origin_mm, pitch_mm, rows, cols, chain_id, offset_in_chain } = fm;
+  const { origin_mm, pitch_mm, rows, cols, chain_id, offset_in_chain, order } = fm;
   const ox = origin_mm[0];
   const oy = origin_mm[1] || 0;
   const oz = origin_mm[2];
   const px = pitch_mm[0];
   const py = pitch_mm[1];
   const positions = [];
-  for (let r = 0; r < rows; r++) {
+  if (order === "column_major_snake") {
+    // Up-and-down zigzag: col 0 top-to-bottom, col 1 bottom-to-top, ...
     for (let c = 0; c < cols; c++) {
-      const col = r % 2 === 0 ? c : (cols - 1 - c);
-      positions.push({
-        x: ox + col * px,
-        y: oy + r   * py,
-        z: oz,
-        chainId: chain_id,
-        pos: offset_in_chain + r * cols + c,
-      });
+      for (let i = 0; i < rows; i++) {
+        const r = c % 2 === 0 ? i : (rows - 1 - i);
+        positions.push({
+          x: ox + c * px,
+          y: oy + r * py,
+          z: oz,
+          chainId: chain_id,
+          pos: offset_in_chain + c * rows + i,
+        });
+      }
+    }
+  } else {
+    // Default: row-major snake
+    for (let r = 0; r < rows; r++) {
+      for (let i = 0; i < cols; i++) {
+        const c = r % 2 === 0 ? i : (cols - 1 - i);
+        positions.push({
+          x: ox + c * px,
+          y: oy + r * py,
+          z: oz,
+          chainId: chain_id,
+          pos: offset_in_chain + r * cols + i,
+        });
+      }
     }
   }
   return positions;

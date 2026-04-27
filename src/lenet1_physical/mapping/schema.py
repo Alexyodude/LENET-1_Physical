@@ -66,5 +66,12 @@ class Mapping:
                 offset_in_fmap = row * fm.cols + col
             else:
                 offset_in_fmap = row * fm.cols + (fm.cols - 1 - col)
-            return fm.chain_id, fm.offset_in_chain + offset_in_fmap
-        raise NotImplementedError(f"order {fm.order!r} not supported yet")
+        elif fm.order == "column_major_snake":
+            # Up-and-down zigzag: col 0 top-to-bottom, col 1 bottom-to-top, etc.
+            if col % 2 == 0:
+                offset_in_fmap = col * fm.rows + row
+            else:
+                offset_in_fmap = col * fm.rows + (fm.rows - 1 - row)
+        else:
+            raise NotImplementedError(f"order {fm.order!r} not supported yet")
+        return fm.chain_id, fm.offset_in_chain + offset_in_fmap

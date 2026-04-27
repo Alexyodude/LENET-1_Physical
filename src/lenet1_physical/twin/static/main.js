@@ -110,12 +110,14 @@ function mmToScene(x, y, z) {
   return new THREE.Vector3(x, y, z);
 }
 
-function snakePosition(row, col, cols) {
-  if (row % 2 === 0) {
-    return row * cols + col;
-  } else {
-    return row * cols + (cols - 1 - col);
+function snakePosition(row, col, cols, rows = null, order = "row_major_snake") {
+  if (order === "column_major_snake") {
+    // Up-and-down zigzag: col 0 top-to-bottom, col 1 bottom-to-top, ...
+    if (col % 2 === 0) return col * rows + row;
+    return col * rows + (rows - 1 - row);
   }
+  if (row % 2 === 0) return row * cols + col;
+  return row * cols + (cols - 1 - col);
 }
 
 function placeLEDsFromMapping(mapping) {
@@ -138,7 +140,7 @@ function placeLEDsFromMapping(mapping) {
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const snakeIdx = snakePosition(r, c, cols);
+          const snakeIdx = snakePosition(r, c, cols, rows, fm.order);
           const pos = offset + snakeIdx;
           const key = `${chainId}:${pos}`;
 
@@ -314,7 +316,7 @@ async function startStaticFallback() {
   wsStatusEl.textContent = "STATIC";
   wsStatusEl.className = "status-val status-connected";
   try {
-    const mod = await import("./static-mode-v2.js?v=ort121");
+    const mod = await import("./static-mode-v2.js?v=cms");
     // Bridge: route static-mode frames through handleFrame too so seq/fps update.
     window.twinEvents.addEventListener("frame", (ev) => handleFrame(ev.detail));
     await mod.startStaticMode();
@@ -403,10 +405,13 @@ function handleFrame(f) {
               buf = new Uint8ClampedArray(fm.rows * fm.cols * 3);
               slicePixelData.set(sliceKey, buf);
             }
-            const snakeIdx = snakePosition(meta.row, meta.col, fm.cols);
-            buf[snakeIdx * 3]     = r;
-            buf[snakeIdx * 3 + 1] = g;
-            buf[snakeIdx * 3 + 2] = b;
+            // Slice canvas is rendered row-major; index by (row, col), NOT
+            // the physical chain order. (Decoupling slice layout from wiring
+            // means slice panels stay readable regardless of snake direction.)
+            const idx = meta.row * fm.cols + meta.col;
+            buf[idx * 3]     = r;
+            buf[idx * 3 + 1] = g;
+            buf[idx * 3 + 2] = b;
           }
         }
       }

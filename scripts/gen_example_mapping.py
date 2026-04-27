@@ -49,7 +49,7 @@ def main() -> None:
             print(f"        cols: {cols}")
             print(f"        origin_mm: [{x0}, {y0}, {z}]")
             print(f"        pitch_mm: [{PITCH_MM}, {PITCH_MM}]")
-            print(f"        order: row_major_snake")
+            print(f"        order: column_major_snake")
             layer_chains_used[chain_for_this_fm] = layer_chains_used.get(chain_for_this_fm, 0) + rows * cols
         for cid, length in sorted(layer_chains_used.items()):
             chains_declared.append((cid, length))

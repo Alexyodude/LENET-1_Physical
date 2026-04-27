@@ -6,8 +6,16 @@ const L1_CHAIN = 0;
 const L6_CHAIN = 16;
 const NUM_CLASSES = 10;
 
-// Unsnake a linear snake-order position back to (row, col)
-function unsnake(snakeIdx, cols) {
+// Unsnake a linear snake-order position back to (row, col).
+// Default order is row_major_snake (left-right, right-left, ...);
+// column_major_snake is the up-and-down zigzag used for the physical wiring.
+function unsnake(snakeIdx, cols, rows = null, order = "row_major_snake") {
+  if (order === "column_major_snake") {
+    const c = Math.floor(snakeIdx / rows);
+    const within = snakeIdx % rows;
+    const row = c % 2 === 0 ? within : (rows - 1 - within);
+    return { row, col: c };
+  }
   const row = Math.floor(snakeIdx / cols);
   const col = row % 2 === 0 ? snakeIdx % cols : cols - 1 - (snakeIdx % cols);
   return { row, col };
@@ -88,6 +96,21 @@ export function setupArchPanel(container) {
     window.twinEvents = new EventTarget();
   }
 
+  // Determine the L1 fmap snake order from the mapping (defaults to row-major).
+  // Read from window.twin if available, otherwise fall back to fetching mapping.json.
+  let l1Order = "row_major_snake";
+  function setL1OrderFromMapping(m) {
+    const fm = m && m.layers && m.layers.L1 && m.layers.L1.feature_maps && m.layers.L1.feature_maps[0];
+    if (fm && fm.order) l1Order = fm.order;
+  }
+  if (window.twin && window.twin.mapping) {
+    setL1OrderFromMapping(window.twin.mapping);
+  } else {
+    fetch("./mapping.json").then(r => r.ok ? r.json() : null).then(m => {
+      if (m) setL1OrderFromMapping(m);
+    }).catch(() => {});
+  }
+
   const { ctx, pixelBuf, PIXEL } = buildInputPreview(container);
   const bars = buildConfidencePanel(container);
 
@@ -97,7 +120,7 @@ export function setupArchPanel(container) {
     if (layer === "L1") {
       for (const [chain, position, r, g, b] of deltas) {
         if (chain !== L1_CHAIN) continue;
-        const { row, col } = unsnake(position, COLS_L1);
+        const { row, col } = unsnake(position, COLS_L1, ROWS_L1, l1Order);
         if (row < 0 || row >= ROWS_L1 || col < 0 || col >= COLS_L1) continue;
         const idx = (row * COLS_L1 + col) * 3;
         pixelBuf[idx]     = r;
