@@ -54,6 +54,17 @@ The digital twin UI ships a second-generation feature set on top of the base 3D 
 - **History scrubber** — every inference cycle is recorded server-side (up to 50); select any past inference from the list, scrub frame-by-frame, or play it back at 80 ms/frame.
 - **Expected-vs-commanded diff** — toggle DIFF mode in the history scrubber to highlight LEDs whose commanded colour diverges from expected due to active faults (shown as red wireframe).
 
+## Polish features
+
+The v2 twin now ships six additional polish modules wired into the UI:
+
+- **Draw canvas** — paint a digit on a 280×280 canvas and run it through LeNet live (`/sample-image`) or via the in-browser ONNX static fallback. Housed in `#draw-host` in the right panel.
+- **Camera presets** — FRONT / SIDE / TOP / ISO buttons with a smooth 600 ms cubic-in-out tween to preset viewpoints. Rendered inside `#camera-presets-host` below the TEST PIXEL section.
+- **Mobile drawer** — on viewports ≤ 768 px a slide-up drawer with CONTROLS / FAULTS / HISTORY / SLICES tabs replaces the desktop panel layout. Activated at the end of `init()` after all panels exist.
+- **Performance overlay** — press `P` to toggle a fixed HUD showing FPS, avg frame time, and frames-per-inference. Activated unconditionally on `document.body`.
+- **Lazy mobile loaders** — on mobile, advanced controls (faults + history) are gated behind a single "Load advanced controls" button to reduce initial JS work; on desktop they load eagerly.
+- **Slice render optimisation** — feature-map slice canvases now use `ImageData` + `OffscreenCanvas` via `paintSlice` / `markDirty` / `flushDirtyTo` from `slice-render.js`, replacing the per-pixel `fillRect` loop.
+
 ## Tests
 
 ```
