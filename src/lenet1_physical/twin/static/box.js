@@ -84,6 +84,28 @@ function makePowerMarker() {
   return new THREE.Mesh(geo, mat);
 }
 
+// Per-layer material registry — used by the highlight system below so the
+// active layer reads brighter than its neighbours during stepping.
+const _layerMaterials = new Map();
+const ACTIVE_SLAB_OPACITY    = 0.95;
+const ACTIVE_FRAME_OPACITY   = 1.0;
+const INACTIVE_SLAB_OPACITY  = 0.30;
+const INACTIVE_FRAME_OPACITY = 0.20;
+
+function highlightLayer(activeLayerName) {
+  for (const [name, mats] of _layerMaterials) {
+    const isActive = name === activeLayerName;
+    mats.slabMat.opacity  = isActive ? ACTIVE_SLAB_OPACITY  : INACTIVE_SLAB_OPACITY;
+    mats.frameMat.opacity = isActive ? ACTIVE_FRAME_OPACITY : INACTIVE_FRAME_OPACITY;
+    // Brighten the frame color for the active layer; dim others toward gray.
+    if (isActive) {
+      mats.frameMat.color.copy(mats.themeColor);
+    } else {
+      mats.frameMat.color.copy(mats.themeColor).multiplyScalar(0.4).lerp(new THREE.Color(0x556070), 0.5);
+    }
+  }
+}
+
 // Called by integration layer (worker-7 / main.js) with an existing Three.js scene.
 // Also auto-invoked below if window.__lenet1Scene is available (set by main.js).
 export function setupPhysicalBox(scene, mapping) {
@@ -116,6 +138,11 @@ export function setupPhysicalBox(scene, mapping) {
       color: frameColor,
       transparent: true,
       opacity: 0.85,
+    });
+    _layerMaterials.set(layerName, {
+      slabMat: slabMatBase,
+      frameMat,
+      themeColor: theme.clone(),
     });
 
     for (const fm of fmaps) {
@@ -208,6 +235,17 @@ export function setupPhysicalBox(scene, mapping) {
       }
     }
   }
+}
+
+// Hook into the global frame stream so the most recently lit layer is
+// highlighted (its slabs at full opacity, others dimmed). Works for both
+// auto-cycle and manual stepping.
+if (typeof window !== "undefined") {
+  window.twinEvents = window.twinEvents || new EventTarget();
+  window.twinEvents.addEventListener("frame", (ev) => {
+    const layer = ev.detail && ev.detail.layer;
+    if (layer) highlightLayer(layer);
+  });
 }
 
 // Auto-init: wait for main.js to expose its scene, then layer the physical box on top.
