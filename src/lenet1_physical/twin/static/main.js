@@ -544,6 +544,67 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
+// ── Panel drag-resize ────────────────────────────────────────────────────
+// Right column width is driven by the CSS variable --panel-width.
+// Persisted in localStorage. Hidden on mobile via CSS.
+function setupPanelResize() {
+  const handle = document.getElementById("panel-resizer");
+  if (!handle) return;
+  const root = document.documentElement;
+  const MIN = 180, MAX = 480;
+
+  const stored = parseInt(localStorage.getItem("twinPanelWidth") || "", 10);
+  if (Number.isFinite(stored) && stored >= MIN && stored <= MAX) {
+    root.style.setProperty("--panel-width", stored + "px");
+  }
+
+  let dragging = false;
+  let startX = 0;
+  let startWidth = 0;
+
+  function getPanelWidth() {
+    const v = getComputedStyle(root).getPropertyValue("--panel-width").trim();
+    return parseInt(v, 10) || 240;
+  }
+
+  handle.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    handle.classList.add("dragging");
+    handle.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    startWidth = getPanelWidth();
+    document.body.style.cursor = "col-resize";
+  });
+
+  handle.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    // Dragging left increases width (handle is on the LEFT of the panel).
+    const dx = startX - e.clientX;
+    let w = Math.max(MIN, Math.min(MAX, startWidth + dx));
+    root.style.setProperty("--panel-width", w + "px");
+    resize();
+  });
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove("dragging");
+    document.body.style.cursor = "";
+    localStorage.setItem("twinPanelWidth", String(getPanelWidth()));
+  }
+  handle.addEventListener("pointerup", endDrag);
+  handle.addEventListener("pointercancel", endDrag);
+  handle.addEventListener("lostpointercapture", endDrag);
+
+  // Double-click resets to default
+  handle.addEventListener("dblclick", () => {
+    root.style.setProperty("--panel-width", "240px");
+    localStorage.removeItem("twinPanelWidth");
+    resize();
+  });
+}
+setupPanelResize();
+
 function animate() {
   requestAnimationFrame(animate);
 

@@ -27,13 +27,45 @@ html, body {
 }
 
 /* ── Root layout ── */
+:root {
+  --panel-width: 240px;
+}
+
 #root {
   display: grid;
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: 1fr 4px var(--panel-width);
   height: calc(100vh - 160px);
-  gap: 1px;
+  gap: 0;
   background: var(--border);
 }
+
+#panel-resizer {
+  background: var(--border);
+  cursor: col-resize;
+  user-select: none;
+  position: relative;
+  transition: background 120ms;
+}
+#panel-resizer:hover,
+#panel-resizer.dragging {
+  background: var(--accent-dim);
+}
+#panel-resizer::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -3px;
+  width: 10px;
+  height: 36px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, var(--text-dim), transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms;
+  border-radius: 2px;
+}
+#panel-resizer:hover::after,
+#panel-resizer.dragging::after { opacity: 0.4; }
 
 /* ── Right panels stack ── */
 #right-panels {
@@ -366,13 +398,61 @@ input[type="range"] {
   pointer-events: none;
 }
 
-/* ── Responsive: minimum 1280px wide ── */
+/* ── Tablet ─────────────────────────────────────────────────────────────── */
 @media (max-width: 1279px) {
-  #root { grid-template-columns: 1fr 180px; }
   #prediction-overlay { font-size: 64px; }
 }
 
+/* ── Mobile (≤768px) ────────────────────────────────────────────────────────
+ * Vertical stack: 3D scene on top (60vh), control panels stack below in a
+ * scrollable column. Resizer hidden. Touch targets enlarged. Bottom slice
+ * strip becomes a horizontal scroll under the controls.
+ */
+@media (max-width: 768px) {
+  html, body { font-size: 13px; }
+
+  #root {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 60vh auto;
+    height: calc(100vh - 200px);
+  }
+  #panel-resizer { display: none; }
+
+  #right-panels {
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: calc(40vh - 60px);
+  }
+
+  /* Larger touch-friendly buttons */
+  #panel button, .v2-panel button {
+    min-height: 40px;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+  }
+  #brightness, #test-chain, #test-pos {
+    min-height: 36px;
+    font-size: 14px;
+  }
+
+  /* Horizontal slice strip with native scrolling on mobile */
+  #slices-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #slices { flex-wrap: nowrap; }
+
+  /* Tooltip too distracting on touch */
+  #tooltip { display: none !important; }
+
+  /* Static-mode banner shouldn't overlap the prediction */
+  #static-mode-banner { font-size: 9px !important; padding: 4px 8px !important; }
+
+  /* Smaller prediction overlay on mobile */
+  #prediction-overlay { font-size: 48px; }
+}
+
+/* ── Wide desktop ──────────────────────────────────────────────────────── */
 @media (min-width: 1920px) {
-  #panel { width: 260px; }
-  #root { grid-template-columns: 1fr 260px; }
+  :root { --panel-width: 280px; }
 }

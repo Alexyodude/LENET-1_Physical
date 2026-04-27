@@ -24,6 +24,9 @@
       <div id="prediction-overlay" aria-live="polite"></div>
     </div>
 
+    <!-- Drag handle to resize the right panel -->
+    <div id="panel-resizer" role="separator" aria-orientation="vertical"></div>
+
     <!-- Right: stacked panels -->
     <div id="right-panels">
     <aside id="panel">
@@ -88,6 +91,7 @@
   <!-- Hover tooltip -->
   <div id="tooltip"></div>
 
-  <script type="module" src="./main.js?v=cms"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script type="module" src="./main.js?v=resize-mobile"></script>
 </body>
 </html>
