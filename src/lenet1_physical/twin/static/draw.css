@@ -1,0 +1,90 @@
+/* ── Drawing canvas panel ── */
+.draw-panel {
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+}
+
+.draw-header {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-section);
+}
+
+.draw-title {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.draw-body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#draw-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: crosshair;
+  touch-action: none;
+  image-rendering: pixelated;
+  background: #000;
+}
+
+#draw-canvas:hover {
+  border-color: var(--accent-dim);
+}
+
+.draw-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.draw-btn {
+  padding: 7px 0;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+.draw-result {
+  min-height: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s;
+}
+
+.draw-result--pending {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.draw-result--ok {
+  color: var(--accent);
+  text-shadow: 0 0 16px rgba(0, 200, 255, 0.4);
+}
+
+.draw-result--err {
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 768px) {
+  #draw-canvas {
+    max-width: 200px;
+    align-self: center;
+  }
+}
