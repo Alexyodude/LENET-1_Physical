@@ -49,11 +49,13 @@ export function setupMobileDrawer() {
   document.body.appendChild(drawer);
 
   // ── Move existing panel content into panes ─────────────────────────────────
-  // Tab 0 — CONTROLS: all .panel-section elements from #panel
+  // Tab 0 — CONTROLS: all .panel-section elements from #panel + draw canvas
   const panel = document.getElementById("panel");
   if (panel) {
     panel.querySelectorAll(".panel-section").forEach(sec => panes[0].appendChild(sec));
   }
+  const drawHost = document.getElementById("draw-host");
+  if (drawHost) panes[0].appendChild(drawHost);
 
   // Tab 1 — FAULTS
   const faultHost = document.getElementById("fault-panel-host");
@@ -63,12 +65,9 @@ export function setupMobileDrawer() {
   const historyHost = document.getElementById("history-panel-host");
   if (historyHost) panes[2].appendChild(historyHost);
 
-  // Tab 3 — SLICES: arch-panel-host + draw-host + #slices-wrap contents
+  // Tab 3 — SLICES: arch-panel-host + slice strip
   const archHost = document.getElementById("arch-panel-host");
   if (archHost) panes[3].appendChild(archHost);
-
-  const drawHost = document.getElementById("draw-host");
-  if (drawHost) panes[3].appendChild(drawHost);
 
   const slicesWrap = document.getElementById("slices-wrap");
   if (slicesWrap) panes[3].appendChild(slicesWrap);
