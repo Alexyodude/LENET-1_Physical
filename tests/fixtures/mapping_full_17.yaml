@@ -17,7 +17,7 @@ layers:
         offset_in_chain: 0
         rows: 24
         cols: 24
-        origin_mm: [-115.0, -115.0, 120.0]
+        origin_mm: [-115.0, -115.0, 250.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 1
@@ -25,7 +25,7 @@ layers:
         offset_in_chain: 0
         rows: 24
         cols: 24
-        origin_mm: [-115.0, -115.0, 128.0]
+        origin_mm: [-115.0, -115.0, 258.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 2
@@ -33,7 +33,7 @@ layers:
         offset_in_chain: 0
         rows: 24
         cols: 24
-        origin_mm: [-115.0, -115.0, 136.0]
+        origin_mm: [-115.0, -115.0, 266.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 3
@@ -41,7 +41,7 @@ layers:
         offset_in_chain: 0
         rows: 24
         cols: 24
-        origin_mm: [-115.0, -115.0, 144.0]
+        origin_mm: [-115.0, -115.0, 274.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
   L3:
@@ -51,7 +51,7 @@ layers:
         offset_in_chain: 0
         rows: 12
         cols: 12
-        origin_mm: [-55.0, -55.0, 264.0]
+        origin_mm: [-55.0, -55.0, 524.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 1
@@ -59,7 +59,7 @@ layers:
         offset_in_chain: 0
         rows: 12
         cols: 12
-        origin_mm: [-55.0, -55.0, 272.0]
+        origin_mm: [-55.0, -55.0, 532.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 2
@@ -67,7 +67,7 @@ layers:
         offset_in_chain: 0
         rows: 12
         cols: 12
-        origin_mm: [-55.0, -55.0, 280.0]
+        origin_mm: [-55.0, -55.0, 540.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 3
@@ -75,7 +75,7 @@ layers:
         offset_in_chain: 0
         rows: 12
         cols: 12
-        origin_mm: [-55.0, -55.0, 288.0]
+        origin_mm: [-55.0, -55.0, 548.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
   L4:
@@ -85,7 +85,7 @@ layers:
         offset_in_chain: 0
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 408.0]
+        origin_mm: [-35.0, -35.0, 798.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 1
@@ -93,7 +93,7 @@ layers:
         offset_in_chain: 64
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 416.0]
+        origin_mm: [-35.0, -35.0, 806.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 2
@@ -101,7 +101,7 @@ layers:
         offset_in_chain: 128
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 424.0]
+        origin_mm: [-35.0, -35.0, 814.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 3
@@ -109,7 +109,7 @@ layers:
         offset_in_chain: 0
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 432.0]
+        origin_mm: [-35.0, -35.0, 822.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 4
@@ -117,7 +117,7 @@ layers:
         offset_in_chain: 64
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 440.0]
+        origin_mm: [-35.0, -35.0, 830.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 5
@@ -125,7 +125,7 @@ layers:
         offset_in_chain: 128
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 448.0]
+        origin_mm: [-35.0, -35.0, 838.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 6
@@ -133,7 +133,7 @@ layers:
         offset_in_chain: 0
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 456.0]
+        origin_mm: [-35.0, -35.0, 846.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 7
@@ -141,7 +141,7 @@ layers:
         offset_in_chain: 64
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 464.0]
+        origin_mm: [-35.0, -35.0, 854.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 8
@@ -149,7 +149,7 @@ layers:
         offset_in_chain: 128
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 472.0]
+        origin_mm: [-35.0, -35.0, 862.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 9
@@ -157,7 +157,7 @@ layers:
         offset_in_chain: 0
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 480.0]
+        origin_mm: [-35.0, -35.0, 870.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 10
@@ -165,7 +165,7 @@ layers:
         offset_in_chain: 64
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 488.0]
+        origin_mm: [-35.0, -35.0, 878.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 11
@@ -173,7 +173,7 @@ layers:
         offset_in_chain: 128
         rows: 8
         cols: 8
-        origin_mm: [-35.0, -35.0, 496.0]
+        origin_mm: [-35.0, -35.0, 886.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
   L5:
@@ -183,7 +183,7 @@ layers:
         offset_in_chain: 0
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 616.0]
+        origin_mm: [-15.0, -15.0, 1136.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 1
@@ -191,7 +191,7 @@ layers:
         offset_in_chain: 16
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 624.0]
+        origin_mm: [-15.0, -15.0, 1144.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 2
@@ -199,7 +199,7 @@ layers:
         offset_in_chain: 32
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 632.0]
+        origin_mm: [-15.0, -15.0, 1152.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 3
@@ -207,7 +207,7 @@ layers:
         offset_in_chain: 48
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 640.0]
+        origin_mm: [-15.0, -15.0, 1160.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 4
@@ -215,7 +215,7 @@ layers:
         offset_in_chain: 0
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 648.0]
+        origin_mm: [-15.0, -15.0, 1168.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 5
@@ -223,7 +223,7 @@ layers:
         offset_in_chain: 16
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 656.0]
+        origin_mm: [-15.0, -15.0, 1176.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 6
@@ -231,7 +231,7 @@ layers:
         offset_in_chain: 32
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 664.0]
+        origin_mm: [-15.0, -15.0, 1184.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 7
@@ -239,7 +239,7 @@ layers:
         offset_in_chain: 48
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 672.0]
+        origin_mm: [-15.0, -15.0, 1192.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 8
@@ -247,7 +247,7 @@ layers:
         offset_in_chain: 0
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 680.0]
+        origin_mm: [-15.0, -15.0, 1200.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 9
@@ -255,7 +255,7 @@ layers:
         offset_in_chain: 16
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 688.0]
+        origin_mm: [-15.0, -15.0, 1208.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 10
@@ -263,7 +263,7 @@ layers:
         offset_in_chain: 32
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 696.0]
+        origin_mm: [-15.0, -15.0, 1216.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
       - id: 11
@@ -271,7 +271,7 @@ layers:
         offset_in_chain: 48
         rows: 4
         cols: 4
-        origin_mm: [-15.0, -15.0, 704.0]
+        origin_mm: [-15.0, -15.0, 1224.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
   L6:
@@ -281,7 +281,7 @@ layers:
         offset_in_chain: 0
         rows: 1
         cols: 10
-        origin_mm: [-45.0, 0.0, 824.0]
+        origin_mm: [-45.0, 0.0, 1474.0]
         pitch_mm: [10.0, 10.0]
         order: row_major_snake
 chains:

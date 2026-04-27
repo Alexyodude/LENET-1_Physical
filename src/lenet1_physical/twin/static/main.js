@@ -60,15 +60,15 @@ const gridHelper = new THREE.GridHelper(2000, 40, 0x1e2d3d, 0x111820);
 gridHelper.position.y = -40;
 scene.add(gridHelper);
 
-const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 8000);
-camera.position.set(600, 300, 900);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 12000);
+camera.position.set(1300, 500, 1800);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.minDistance = 100;
 controls.maxDistance = 4000;
-controls.target.set(400, 50, 75);
+controls.target.set(0, 0, 850);
 
 // Ambient + directional for the grid/labels; LEDs are emissive so unaffected
 scene.add(new THREE.AmbientLight(0xffffff, 0.2));

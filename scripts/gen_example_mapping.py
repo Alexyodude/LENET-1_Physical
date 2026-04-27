@@ -21,7 +21,7 @@ PARTITION = {
 }
 PITCH_MM = 10.0
 INTRA_LAYER_SPACING_MM = 8.0   # between adjacent fmaps inside one layer
-INTER_LAYER_SPACING_MM = 120.0  # between last fmap of layer N and first of N+1
+INTER_LAYER_SPACING_MM = 250.0  # between last fmap of layer N and first of N+1
 GPIO_PINS = [4, 5, 6, 12, 13, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 
 
