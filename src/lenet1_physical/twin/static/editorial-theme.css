@@ -166,6 +166,19 @@ html, body {
   color: var(--bg-panel) !important;
 }
 
+.step-indicator {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 4px 0 6px;
+}
+.step-indicator strong {
+  color: var(--text);
+  font-weight: 400;
+}
+
 /* ── Buttons: flat, paper-stamped ─────────────────────────────────────── */
 .btn-primary, .btn-secondary, .camera-preset-btn {
   background: var(--bg-panel) !important;

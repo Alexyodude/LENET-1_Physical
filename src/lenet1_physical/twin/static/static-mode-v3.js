@@ -131,6 +131,48 @@ async function inferRandom() {
   return inferImage(sample.image, { layerDelayMs: 220 });
 }
 
+// Manual step state — each click advances ONE layer through a single
+// sample's inference. New sample is drawn after L6 (or on first step).
+let manual = null;  // { results, layerIdx, predictedDigit }
+
+async function stepLayer() {
+  if (!session || !samples) return null;
+
+  // Need a new sample if first step or last sample already finished.
+  if (!manual || manual.layerIdx >= LAYER_ORDER.length - 1) {
+    const sample = samples[Math.floor(Math.random() * samples.length)];
+    const px = sample.image;
+    const norm = new Float32Array(784);
+    for (let i = 0; i < 784; i++) {
+      norm[i] = ((px[i] / 255.0) - MNIST_MEAN) / MNIST_STD;
+    }
+    const inputTensor = new ort.Tensor("float32", norm, [1, 1, 28, 28]);
+    const results = await session.run({ input: inputTensor });
+    manual = { results, layerIdx: -1, predictedDigit: -1 };
+  }
+
+  manual.layerIdx++;
+  const layer = LAYER_ORDER[manual.layerIdx];
+  const out = manual.results[layer];
+  if (!out) return manual.layerIdx;
+
+  let dims = out.dims;
+  const data = out.data;
+  if (layer === "L6") {
+    dims = [1, 1, 10];
+    let bestIdx = 0, bestVal = -Infinity;
+    for (let i = 0; i < 10; i++) {
+      if (data[i] > bestVal) { bestVal = data[i]; bestIdx = i; }
+    }
+    manual.predictedDigit = bestIdx;
+  }
+  const frame = activationsToFrame(layer, data, dims);
+  dispatchFrame(frame);
+  return manual.layerIdx;
+}
+
+function resetManualCursor() { manual = null; }
+
 async function loop() {
   while (!stopped) {
     if (paused) { await sleep(150); continue; }
@@ -205,9 +247,14 @@ export async function startStaticMode() {
   // Drawing canvas + transport controls.
   window.staticInferImage = (image28) => inferImage(image28, { layerDelayMs: 220 });
   window.staticPause      = () => { paused = true; };
-  window.staticResume     = () => { paused = false; };
+  window.staticResume     = () => { paused = false; resetManualCursor(); };
   window.staticIsPaused   = () => paused;
-  window.staticStep       = () => inferRandom();
+  window.staticStep       = () => stepLayer();
+  window.staticManualState = () => manual && {
+    layerIdx: manual.layerIdx,
+    layer: LAYER_ORDER[manual.layerIdx] || null,
+    total: LAYER_ORDER.length,
+  };
 
   // Expose a single-shot inference function for the drawing canvas to call.
   // Returns the predicted digit.
